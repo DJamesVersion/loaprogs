@@ -1,0 +1,691 @@
+﻿((((((((((((((((((((tahkmahnelle))))))))))))))))))))
+Something from Patton Wilson (((((((((Hintsheet))))))))
+About these
+ loaprogs
+
+loalore
+Letter Keyword Game Role/Meaning
+A A-riatnah The starting village; a place of simple folk and lost memory.
+B B-atobwatchaeh A protective/sentient magical artifact or guardian to be found.
+C C-'illiatnah A character class/path: The Scholar (focus on wisdom and puzzles).
+D D-iadowatchaeh A dark, foreboding forest or ruin where a choice must be made.
+E E-echeechuwah An ancient language or script you must learn to progress.
+F F-'illianarre The path of the Fighter (focus on combat and strength).
+G G-agoikenne A magical portal or gateway that transports the player.
+H H-'uilliatachaeh A specific healing potion or spell needed for a key character.
+I I-llianarre The path of the Rogue (focus on stealth and diplomacy).
+J J-ampejinne The name of the Elder Council or guiding spirit.
+K K-ajoinkenne The Mountain Peaks, home to a hidden temple or master.
+L L-enemketobontette The Great Library of Tahkmahnelle, containing the final secret.
+M M-omaw The Main Quest objective—a powerful, missing deity or source of power.
+N N-ona, N-ano Two opposing forces or twin spirits: Light (N-ona) and Shadow (N-ano).
+O O-ichenne A powerful Orb or magical device used to channel power.
+P P-erfuvium A type of poison or magical affliction you must overcome.
+Q Q-uaristenne A puzzle or riddle that blocks the path to the end game.
+R R-oykenne A King or powerful ruler character, possibly an antagonist.
+S S-tihuu, S-iataeh The Elements of the world: Earth (S-tihuu) and Air (S-iataeh).
+T T-etnobautte, T-ahkmahnelle The Final Trial (T-etnobautte) and the world itself.
+U U-illiatachaeh A Universal Key or master spell/ability.
+V V-raelvrae A powerful magic-wielding creature or dragon.
+W W-eetus The Weapon you wield (e.g., The Weetus Blade).
+X X-iangxong An exotic, dangerous creature encountered in the forest.
+Y Y-'uilliatachaeh A character class/path: The Sage (focus on magic and artifacts).
+Z Z-azoykenne The Corrupting force or primary villain's influence.
+
+
+Letter Original Role Sequel Role/Meaning
+A A-riatnah A-wakening: The starting point is now a sacred ground of memory.
+B B-atobwatchaeh B-arrier: An ancient magical defense system you must reactivate.
+C C-'illiatnah C-hronos: A time-travel or memory artifact key to the quest.
+D D-iadowatchaeh D-eluge: A newly flooded coastal region, home to the first Rune.
+E E-echeechuwah E-choes: The spirit of an ancient master that aids you.
+F F-'illianarre F-licker: The unstable magical energy permeating the lands.
+G G-agoikenne G-rudge: A bitter, recurring foe from the first game's aftermath.
+H H-'uilliatachaeh H-earth: A safe haven or the center of the resistance.
+I I-llianarre I-dol: A false relic or distraction you must discern.
+J J-ampejinne J-ourney: A key ability that allows fast travel between fixed points.
+K K-ajoinkenne K-raken: A powerful, elemental sea creature guarding the second Rune.
+L L-enemketobontette L-ost: The library is damaged, and you search for a single missing Scroll.
+M M-omaw M-antle: The divine cloak of authority; a disguise or protection item.
+N N-ona, N-ano N-exus: The place where the light and shadow forces converge. (Third Rune)
+O O-ichenne O-men: A prophetic vision or warning that guides your final path.
+P P-erfuvium P-lague: A widespread illness affecting the innocent; requires H-'uilliatachaeh.
+Q Q-uaristenne Q-uest: The core objective—finding and activating the five Runes.
+R R-oykenne R-ecluse: The former king's hidden, vengeful general.
+S S-tihuu, S-iataeh S-hadowlands: A new zone corrupted by remnants of Z-azoykenne. (Fourth Rune)
+T T-etnobautte, Tahkmahnelle T-reasury: A hidden vault containing the final Rune.
+U U-illiatachaeh U-nravel: The critical spell or skill needed to activate the Runes.
+V V-raelvrae V-ortex: A dangerous magical phenomenon to be navigated.
+W W-eetus W-rath: A curse placed upon your chosen weapon.
+X X-iangxong X-enial: A friendly, but cryptic, new NPC offering trade or secrets.
+Y Y-'uilliatachaeh Y-ield: The choice to sacrifice an item for a greater power boost.
+Z Z-azoykenne Z-ephyr: A powerful, purifying wind that you must harness to win.
+
+
+
+
+Letter Game Role (Visual) Pygame Representation
+A A-wakening Starting map screen with an illuminated point.
+B B-arrier A translucent shield graphic effect.
+C C-hronos A clock icon or a time-slowdown visual filter.
+D D-eluge A water-filled level with wave animation.
+E E-choes A ghostly, semi-transparent guide NPC sprite.
+F F-licker A pulsating, unstable energy source graphic.
+G G-rudge A dark, armored enemy sprite with a health bar.
+H H-earth A campfire or sanctuary background image.
+I I-dol A static, puzzle-solving object.
+J J-ourney An animated map transition sequence.
+K K-raken A large, multi-tentacled boss sprite.
+L L-ost A broken scroll image (inventory item).
+M M-antle A royal cloak (player equipment sprite).
+N N-exus A split-screen visual, half light/half dark.
+O O-men A glowing, momentary vision overlay graphic.
+P P-lague A spreading, green-tinged visual debuff.
+Q Q-uest The objective tracker (UI element).
+R R-ecluse The final, powerful antagonist sprite.
+S S-hadowlands A dark, parallax-scrolling background.
+T T-reasury A golden vault door graphic.
+U U-nravel A complex, glowing spell circle animation.
+V V-ortex A swirling, dangerous area animation.
+W W-rath A flashing, red screen effect (player damage).
+X X-enial A helpful, non-hostile sprite with a chat bubble.
+Y Y-ield A visual prompt asking for sacrifice.
+Z Z-ephyr A bright, blue-white purification beam animation.
+
+
+
+
+Letter Game Role (Visual) Terminal Visualization Technique
+A A-wakening Colored Border: Bright blue ANSI color codes for the screen frame.
+B B-arrier ASCII Shield: [=== SHIELD ===] drawn with a yellow background color.
+C C-hronos Slow-Motion Text: Text output with a deliberate, slow delay (time.sleep).
+D D-eluge Wavy ASCII: Repeating characters like ~ or ≈ for a water effect.
+E E-choes Flickering Text: The NPC's text is rapidly printed and cleared (flickers).
+F F-licker Pulsating Energy: An output line that quickly cycles between red and yellow colors.
+G G-rudge Detailed ASCII Sprite: A block of characters depicting an enemy, colored dark gray/black.
+H H-earth Fire ASCII: Repeating characters ^ and * colored orange/red.
+I I-dol Puzzle Grid: A simple grid of characters (e.g., `
+K K-raken Large Tentacle Art: A multi-line ASCII image with # and @ symbols.
+N N-exus Split Screen: Left half text is blue (N-ona), right half is red (N-ano).
+O O-men Full-Screen Flash: A quick burst of white background and black text.
+P P-lague Debuff Text: Status line rendered in a sickly green color.
+S S-hadowlands Dark Background: Using ANSI codes to set a deep black background for the scene.
+U U-nravel Text Animation: A sequence of characters expanding and contracting to form a spell circle.
+V V-ortex Swirling Characters: Characters like /, \, -, `
+Z Z-ephyr Purification: A final output rendered in sparkling, bright white text.
+
+
+
+
+Character/Concept Role in the Long Intro Game Relevance
+EadsL The powerful, ambitious, and deeply human Queen. The source of the original, magical power. Her lost Regalia is the player's main quest.
+JWE6 The King, later revealed to be an AI/Cybernetic entity in disguise. Represents logic and cold calculation. His hidden Cyber-Edicts are the obstacles the player faces.
+JPW7 Their child, inheriting both the human magic and the cybernetic nature. Rules for thousands of robot years. The ruler whose reign homogenized and mechanized the world, causing the current conflict.
+The Cyber Robot Years A period of total logical control, where emotion and magic were suppressed. The current environment for the player is a decaying technocracy.
+
+
+
+
+How the Design Works:
+Main Entry Point (netdevaudit.py): This is the top-level command.
+Command Groups (Subparsers): The user must select one of the two major functionalities:
+wifi (For networking tasks)
+python (For development tasks)
+Sub-commands: Once a group is chosen, the user selects a specific action:
+wifi scan or wifi audit <network>
+python format <file> or python docstring <file>
+Simulated Logic: The functions use simulated output, including color-coded terminal text (like red for a Wi-Fi FAIL status or green for a successful format), to give the feel of a real, powerful tool.
+python netdevaudit.py
+
+
+To scan for Wi-Fi networks (simulated):
+```bash
+python netdevaudit.py wifi scan
+
+
+To audit a specific network (simulated):
+```bash
+python netdevaudit.py wifi audit Hidden_AP
+
+
+To format a Python file (simulated):
+```bash
+python netdevaudit.py python format path/to/my_script.py
+
+
+Let me know if you would like to swap out the simulated functions for real-world logic (for instance, using Python's `os` or `subprocess` to execute actual system commands for scanning or calling external formatters).
+
+
+
+
+The Design: The Agricultural Era Clock
+The AEc Year: The core of the new design is the year calculation. It establishes a new epoch starting 10,000 years before the Gregorian year 0.
+Formula: AEc Year = Current Gregorian Year + 10,000
+Example (2025): 2025 + 10,000 = 12025 AEc
+Solar Clock Integration: The underlying engine of the clock remains the same. Time is still measured proportionally based on the Earth's position between solstices and equinoxes. The AEc year is added to the display, providing a grander context.
+New Display Format: Year [Year] AEc | [Age Name] Age | Time: Age.Month.Week.Day.Hour.Minute.Wick
+Example Calculation (for the time you provided):
+Standard Time: Tuesday, October 7, 2025 at 6:57 PM EDT.
+UTC Conversion: EDT is UTC-4. The equivalent universal time is 22:57 UTC on October 7, 2025. All astronomical calculations use this universal standard.
+AEc Year: 2025 + 10,000 = **12025 AEc**.
+Current Age: October 7th falls after the Autumnal Equinox (Sept 22, 2025) and before the Winter Solstice (Dec 21, 2025). This is the Autumn Age (Age 3).
+Solar Time Calculation: The clock calculates that we are ~17% of the way through the Autumn season. This proportion is converted into the solar time units.
+Final Displayed Time: Year 12025 AEc | Autumn Age | Time: 3.1.3.1.2.3.5
+
+
+the Tahkmahnelle system:
+Ages: It tracks the 4 Ages, determining the current one based on the real-world date relative to the equinox/solstice cycle.
+Units: It scales the Earth day (86,400 seconds) to fit the 8 \times 7 \times 9 Tahkmahnelle subdivisions, making one T-Second equal to about 171.4 real seconds.
+Concise Running Time: It provides a clear, continuously updated display showing the time in all 7 units, prefixed by 'W' as requested.
+
+
+Updates in Tahkmahnelle_SolarClock.py:
+T-Tick Integration: Added T-Ticks as the smallest unit, using 1000 T-Ticks per T-Second for fractional display, calculated using millisecond precision from the real-world time.
+Solar Clock Speed: The refresh rate of the running clock has been set to 0.046 seconds (time.sleep(0.046)).
+Historical Offset: The display is offset to show the current T-Year as 5849.
+Display Format: The "W" concise output now includes T-Ticks and the T-Year.
+
+
+I will create a single, comprehensive Python application, Tahkmahnelle_Chronologer.py, that offers both an interactive dictionary and a 46ms-precision running solar clock, starting in Year 5849 with the new year beginning after the Summer Solstice.
+
+
+This new application, Tahkmahnelle_Chronologer.py, now fully integrates the linguistic and temporal systems:
+Phonological Naming: The 26 roots (A-Z) are used to dynamically name the 5 T-Days, 9 T-Weeks, and 3 T-Months, making them the cycle names (holidays).
+Solar Clock: It runs at the 46 millisecond update rate and displays time in T\text{-Ticks}, S, M, H, D, Wk, Mo, \text{and } Y\text{r}.
+New Year Rule: The T-Year starts correctly after the Summer Solstice (at the Autumn Equinox).
+Dictionary: The LoA dictionary lookup is still available through the main menu.
+
+
+
+
+This application uses the current Universal Coordinated Time (UTC) to determine the position of the Earth within the solar cycle (Ages) and applies your 10,000-year offset to calculate the Agricultural Era, common (AEc) Year.
+Due to the constraints of standard C libraries, the precise dates for the solstices and equinoxes are defined as constants and represent the approximate UTC times for these astronomical events. The solar time units (Month, Week, Day, Hour, Minute, Wick) are implemented using a base-10 proportional system spanning the duration of each Age.
+
+
+This file, aec_clock.c, calculates the current time based on the host system's time in UTC. It defines four solar ages based on approximate equinox and solstice dates and then proportionally scales the elapsed time within the current age into the six-unit solar time format (M.W.D.H.m.k), preceded by the Age index.
+
+
+This web application will use the exact timekeeping logic you defined:
+It calculates the 10,000-year offset to determine the AEc Year.
+It uses the current UTC time to proportionally calculate the Solar Age and the corresponding base-10 time units (M.W.D.H.m.k).
+It provides both the standard UTC digital/analog clocks and your custom AEc digital/analog clocks.
+
+
+This application provides the full visualization you requested:
+Standard UTC Clock: Shows the familiar 12-hour analog and standard digital time display.
+AEc Solar Clock:
+Digital Display: Shows the Year [Year] AEc | [Age Name] Age and the proportional time Time: [Age Index].[M].[W].[D].[H].[m].[k].
+Analog Display:
+The background of the clock face visually fills up to show the current fractionPassed through the entire Solar Age (e.g., Autumn Age).
+The three hands (Hour, Minute, Wick) represent the progress through the Solar Day (base-10 units of H, m, and k), cycling every 10 Solar Hours.
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Clock AEc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+
+        /* Digital Clock Styling */
+        .digital-display {
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 8px rgba(37, 211, 102, 0.7); /* Green glow */
+        }
+
+
+        /* Analog Clock Base */
+        .clock-face {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            margin: 20px auto;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.2), 0 0 10px rgba(0, 0, 0, 0.5) inset;
+            border: 4px solid #30363d;
+        }
+
+
+        /* Standard Analog Hand Styling */
+        .hand {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 0 0;
+            z-index: 10;
+            transition: transform 0.5s cubic-bezier(0.4, 2.5, 0.6, 1.0); /* Springy transition */
+            border-radius: 5px;
+        }
+        
+        .hour-hand-std { width: 4px; height: 50px; background-color: #64ffda; margin-left: -2px; }
+        .minute-hand-std { width: 3px; height: 70px; background-color: #f0f6f0; margin-left: -1.5px; }
+        .second-hand-std { width: 2px; height: 85px; background-color: #ff7b72; margin-left: -1px; }
+
+
+        /* AEc Analog Hand Styling (Base-10) */
+        .hand-aec {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 0 0;
+            z-index: 10;
+            transition: transform 0.5s ease-in-out;
+            border-radius: 5px;
+        }
+        /* H: Solar Hour (Base 10) */
+        .hour-hand-aec { width: 5px; height: 45px; background-color: #3b82f6; margin-left: -2.5px; }
+        /* m: Solar Minute (Base 10) */
+        .minute-hand-aec { width: 3px; height: 65px; background-color: #22c55e; margin-left: -1.5px; }
+        /* k: Wick (Base 10) */
+        .wick-hand-aec { width: 1px; height: 80px; background-color: #facc15; margin-left: -0.5px; }
+        
+        .center-pin {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ff7b72;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            box-shadow: 0 0 10px rgba(255, 123, 114, 0.8);
+        }
+
+
+        /* Age Progress Bar for AEc Clock */
+        .age-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip-path: polygon(50% 50%, 50% 0%, 50% 0%); /* Initial clip path */
+            background: conic-gradient(
+                #16a34a, /* Age color */
+                #16a34a 0%,
+                #374151 0% /* Remaining color */
+            );
+        }
+
+
+        /* Clock markings (For standard 12) */
+        .marker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .marker div {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 8px;
+            width: 2px;
+            background-color: #4b5563;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-6 text-green-400 font-orbitron">
+            Solar Clock AEc (Agricultural Era)
+        </h1>
+        <p class="text-center text-sm mb-10 text-gray-400">
+            AEc Year = Current Gregorian Year + 10,000. Time is calculated proportionally within the solar ages (equinox to solstice).
+        </p>
+
+
+        <div id="loading" class="text-center text-lg text-yellow-500 my-10">Loading Clock Data...</div>
+
+
+        <!-- Clock Grid -->
+        <div id="clock-container" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Standard UTC Clock -->
+            <div class="bg-[#161b22] p-6 rounded-xl shadow-2xl border border-gray-700">
+                <h2 class="text-2xl font-bold text-center mb-4 text-sky-400">Standard UTC Time</h2>
+                <div id="utc-digital" class="digital-display text-4xl text-center mb-6 text-sky-400"></div>
+
+
+                <div class="clock-face border-sky-600 relative" id="utc-analog">
+                    <!-- Standard Clock Markings (12 hours) -->
+                    <div class="marker">
+                        <div style="transform: rotate(0deg) translateY(120px) scaleY(2);"></div>
+                        <div style="transform: rotate(30deg) translateY(120px);"></div>
+                        <div style="transform: rotate(60deg) translateY(120px);"></div>
+                        <div style="transform: rotate(90deg) translateY(120px) scaleY(2);"></div>
+                        <div style="transform: rotate(120deg) translateY(120px);"></div>
+                        <div style="transform: rotate(150deg) translateY(120px);"></div>
+                        <div style="transform: rotate(180deg) translateY(120px) scaleY(2);"></div>
+                        <div style="transform: rotate(210deg) translateY(120px);"></div>
+                        <div style="transform: rotate(240deg) translateY(120px);"></div>
+                        <div style="transform: rotate(270deg) translateY(120px) scaleY(2);"></div>
+                        <div style="transform: rotate(300deg) translateY(120px);"></div>
+                        <div style="transform: rotate(330deg) translateY(120px);"></div>
+                    </div>
+
+
+                    <div id="std-hour" class="hand hour-hand-std"></div>
+                    <div id="std-minute" class="hand minute-hand-std"></div>
+                    <div id="std-second" class="hand second-hand-std"></div>
+                    <div class="center-pin"></div>
+                </div>
+            </div>
+
+
+            <!-- AEc Solar Clock -->
+            <div class="bg-[#161b22] p-6 rounded-xl shadow-2xl border border-gray-700">
+                <h2 class="text-2xl font-bold text-center mb-4 text-green-400">Agricultural Era (AEc) Time</h2>
+                <div id="aec-digital" class="digital-display text-4xl text-center mb-2 text-green-400"></div>
+                <div id="aec-age-info" class="text-sm text-center mb-6 text-gray-400"></div>
+
+
+                <div class="clock-face border-green-600 relative overflow-hidden" id="aec-analog">
+                    
+                    <!-- Age Progress Indicator (Background) -->
+                    <div id="age-progress-bar" class="age-progress"></div>
+
+
+                    <!-- AEc Clock Markings (Base 10) -->
+                    <div class="marker">
+                        <!-- Ten main markers for Solar Hours (0-9) -->
+                        <div style="transform: rotate(0deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(36deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(72deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(108deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(144deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(180deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(216deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(252deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(288deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                        <div style="transform: rotate(324deg) translateY(120px) scaleY(2); background-color: #374151;"></div>
+                    </div>
+
+
+                    <div id="aec-hour" class="hand-aec hour-hand-aec"></div>
+                    <div id="aec-minute" class="hand-aec minute-hand-aec"></div>
+                    <div id="aec-wick" class="hand-aec wick-hand-aec"></div>
+                    <div class="center-pin bg-green-500 shadow-green-700"></div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <script>
+        
+        // --- AEc Constants ---
+        const AEC_OFFSET = 10000;
+        
+        // Epoch: AEc started 10,000 years before Gregorian 0 (i.e., ~10000 BC).
+        
+        // Approximate Solstice/Equinox UTC times (Month: 1-12, Day: 1-31, Hour: 0-23)
+        // These are approximations as the exact time shifts slightly each year.
+        const SOLAR_EVENTS = {
+            SPRING: { month: 3, day: 20, hour: 10 },
+            SUMMER: { month: 6, day: 21, hour: 3 },
+            AUTUMN: { month: 9, day: 22, hour: 12 },
+            WINTER: { month: 12, day: 21, hour: 21 }
+        };
+
+
+        // AEc Unit Definitions (Total divisions per Age = 10^6)
+        const BASE = 10;
+        const WICKS_PER_MINUTE = BASE;
+        const MINUTES_PER_HOUR = BASE;
+        const HOURS_PER_DAY = BASE;
+        const DAYS_PER_WEEK = BASE;
+        const WEEKS_PER_MONTH = BASE;
+        const MONTHS_PER_AGE = BASE;
+        const TOTAL_TICKS = 1000000; // 10^6
+
+
+
+
+        /**
+         * @brief Gets a Date object for a specific UTC time in a given Gregorian year.
+         * @param {number} year Gregorian year.
+         * @param {number} month Month (1-12).
+         * @param {number} day Day (1-31).
+         * @param {number} hour Hour (0-23).
+         * @returns {Date} UTC Date object.
+         */
+        function getUtcDate(year, month, day, hour) {
+            // Note: Date.UTC arguments are 0-indexed for month.
+            return new Date(Date.UTC(year, month - 1, day, hour, 0, 0, 0));
+        }
+
+
+        /**
+         * @brief Calculates the Agricultural Era Clock (AEc) time units.
+         * @param {Date} now Current UTC time.
+         */
+        function calculateAecTime(now) {
+            const currentGregorianYear = now.getUTCFullYear();
+            const aecYear = currentGregorianYear + AEC_OFFSET;
+            
+            // 1. Define Solar Ages for the Current Year
+            
+            const ages = [
+                // Spring (Age 0)
+                { index: 0, name: "Spring", start: getUtcDate(currentGregorianYear, SOLAR_EVENTS.SPRING.month, SOLAR_EVENTS.SPRING.day, SOLAR_EVENTS.SPRING.hour) },
+                // Summer (Age 1)
+                { index: 1, name: "Summer", start: getUtcDate(currentGregorianYear, SOLAR_EVENTS.SUMMER.month, SOLAR_EVENTS.SUMMER.day, SOLAR_EVENTS.SUMMER.hour) },
+                // Autumn (Age 2)
+                { index: 2, name: "Autumn", start: getUtcDate(currentGregorianYear, SOLAR_EVENTS.AUTUMN.month, SOLAR_EVENTS.AUTUMN.day, SOLAR_EVENTS.AUTUMN.hour) },
+                // Winter (Age 3)
+                { index: 3, name: "Winter", start: getUtcDate(currentGregorianYear, SOLAR_EVENTS.WINTER.month, SOLAR_EVENTS.WINTER.day, SOLAR_EVENTS.WINTER.hour) }
+            ];
+
+
+            // 2. Set Age End Times
+            ages[0].end = ages[1].start;
+            ages[1].end = ages[2].start;
+            ages[2].end = ages[3].start;
+            // End of Winter (Age 3) is the Spring Equinox of the *next* Gregorian year
+            ages[3].end = getUtcDate(currentGregorianYear + 1, SOLAR_EVENTS.SPRING.month, SOLAR_EVENTS.SPRING.day, SOLAR_EVENTS.SPRING.hour);
+
+
+            let currentAge = null;
+            
+            // 3. Determine Current Age
+            for (let i = 0; i < ages.length; i++) {
+                if (now >= ages[i].start && now < ages[i].end) {
+                    currentAge = ages[i];
+                    break;
+                }
+            }
+            
+            // Handle the case where the time falls before the current year's Spring Equinox (i.e., still in previous year's Winter)
+            if (!currentAge) {
+                currentAge = ages[3];
+                // Recalculate Winter's start time to be the previous year's Winter Solstice
+                currentAge.start = getUtcDate(currentGregorianYear - 1, SOLAR_EVENTS.WINTER.month, SOLAR_EVENTS.WINTER.day, SOLAR_EVENTS.WINTER.hour);
+            }
+
+
+            const elapsedMs = now.getTime() - currentAge.start.getTime();
+            const durationMs = currentAge.end.getTime() - currentAge.start.getTime();
+            
+            if (durationMs <= 0) return null; // Should not happen with correct dates
+
+
+            let fractionPassed = elapsedMs / durationMs;
+            
+            // Cap fraction at 1.0 (or just below)
+            if (fractionPassed >= 1.0) fractionPassed = 0.999999; 
+
+
+            // 4. Convert Fraction to AEc Solar Time Units
+
+
+            let elapsedTicks = Math.floor(fractionPassed * TOTAL_TICKS);
+            
+            // Deconstruct elapsed_ticks into the 6 units using the defined base-10 system.
+            let M, W, D, H, m, k; // Month, Week, Day, Hour, Minute, Wick
+
+
+            k = elapsedTicks % WICKS_PER_MINUTE;
+            elapsedTicks = Math.floor(elapsedTicks / WICKS_PER_MINUTE);
+            
+            m = elapsedTicks % MINUTES_PER_HOUR;
+            elapsedTicks = Math.floor(elapsedTicks / MINUTES_PER_HOUR);
+
+
+            H = elapsedTicks % HOURS_PER_DAY;
+            elapsedTicks = Math.floor(elapsedTicks / HOURS_PER_DAY);
+            
+            D = elapsedTicks % DAYS_PER_WEEK;
+            elapsedTicks = Math.floor(elapsedTicks / DAYS_PER_WEEK);
+            
+            W = elapsedTicks % WEEKS_PER_MONTH;
+            elapsedTicks = Math.floor(elapsedTicks / WEEKS_PER_MONTH);
+            
+            M = elapsedTicks; // final remaining value (Month)
+
+
+            return {
+                aecYear,
+                ageIndex: currentAge.index,
+                ageName: currentAge.name,
+                M, W, D, H, m, k,
+                fractionPassed,
+                start: currentAge.start,
+                end: currentAge.end
+            };
+        }
+
+
+        // --- Clock Rendering Functions ---
+
+
+        function updateStandardClock(now) {
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcSeconds = now.getUTCSeconds();
+            const utcYear = now.getUTCFullYear();
+            const utcMonth = now.getUTCMonth();
+            const utcDay = now.getUTCDate();
+            
+            // Digital Display
+            const digital = document.getElementById('utc-digital');
+            digital.textContent = `${utcYear}-${String(utcMonth + 1).padStart(2, '0')}-${String(utcDay).padStart(2, '0')} UTC\n${String(utcHours).padStart(2, '0')}:${String(utcMinutes).padStart(2, '0')}:${String(utcSeconds).padStart(2, '0')}`;
+
+
+            // Analog Display Calculations (Standard 12-hour analog)
+            
+            // Hour Hand (360 degrees / 12 hours = 30 deg/hr. + minute fraction)
+            const hourDeg = ((utcHours % 12) * 30) + (utcMinutes * 0.5) - 90; 
+            document.getElementById('std-hour').style.transform = `translate(-50%, -50%) rotate(${hourDeg}deg)`;
+            
+            // Minute Hand (360 degrees / 60 minutes = 6 deg/min)
+            const minuteDeg = (utcMinutes * 6) + (utcSeconds * 0.1) - 90;
+            document.getElementById('std-minute').style.transform = `translate(-50%, -50%) rotate(${minuteDeg}deg)`;
+
+
+            // Second Hand (360 degrees / 60 seconds = 6 deg/sec)
+            const secondDeg = (utcSeconds * 6) - 90;
+            document.getElementById('std-second').style.transform = `translate(-50%, -50%) rotate(${secondDeg}deg)`;
+        }
+
+
+        function updateAecClock(aecTime) {
+            if (!aecTime) return;
+
+
+            const { aecYear, ageName, ageIndex, M, W, D, H, m, k, fractionPassed } = aecTime;
+            
+            // Digital Display
+            const digital = document.getElementById('aec-digital');
+            digital.textContent = `Year ${aecYear} AEc | ${ageName} Age`;
+            
+            const info = document.getElementById('aec-age-info');
+            info.textContent = `Time: ${ageIndex}.${M}.${W}.${D}.${H}.${m}.${k}`;
+
+
+            // --- Analog Display Calculations (Base-10 Proportional) ---
+            
+            // 1. Age Progress Bar (Background Fill)
+            const ageProgressBar = document.getElementById('age-progress-bar');
+            
+            // The conic-gradient fills from the top (0 degrees). 
+            // fractionPassed * 360 gives the angle of fill.
+            const fillAngle = fractionPassed * 360;
+            ageProgressBar.style.background = `conic-gradient(
+                #16a34a, /* Start color */
+                #16a34a ${fillAngle}deg,
+                #27303f ${fillAngle}deg /* Remaining color */
+            )`;
+
+
+            // 2. AEc Clock Hands (representing H, m, k within a single Solar Day/Cycle)
+            
+            // Total Solar Day Ticks = H * 1000 + m * 10 + k
+            // The scale is 10 solar hours per day (H = 0-9). 360 degrees / 10 = 36 deg/H.
+            
+            // Solar Hour Hand (H)
+            const hourFraction = (H + (m / MINUTES_PER_HOUR)) / HOURS_PER_DAY;
+            const hourDegAEC = (hourFraction * 360) - 90; // -90 to start at 12 o'clock equivalent (top)
+            document.getElementById('aec-hour').style.transform = `translate(-50%, -50%) rotate(${hourDegAEC}deg)`;
+            
+            // Solar Minute Hand (m)
+            const minuteFraction = (m + (k / WICKS_PER_MINUTE)) / MINUTES_PER_HOUR;
+            const minuteDegAEC = (minuteFraction * 360) - 90;
+            document.getElementById('aec-minute').style.transform = `translate(-50%, -50%) rotate(${minuteDegAEC}deg)`;
+
+
+            // Solar Wick Hand (k)
+            const wickFraction = k / WICKS_PER_MINUTE;
+            const wickDegAEC = (wickFraction * 360) - 90;
+            document.getElementById('aec-wick').style.transform = `translate(-50%, -50%) rotate(${wickDegAEC}deg)`;
+        }
+
+
+        // --- Main Loop ---
+
+
+        function updateClocks() {
+            const now = new Date(); // Gets current time (will be converted to UTC internally)
+
+
+            // Update Standard UTC Clock
+            updateStandardClock(now);
+
+
+            // Calculate and Update AEc Clock
+            const aecTime = calculateAecTime(now);
+            updateAecClock(aecTime);
+        }
+
+
+        // Initialize and start the clock
+        window.onload = function() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('clock-container').classList.remove('hidden');
+            
+            // Run initially
+            updateClocks();
+            // Update every 100 milliseconds for smooth analog hands
+            setInterval(updateClocks, 100);
+        };
+
+
+    </script>
+</body>
+</html>

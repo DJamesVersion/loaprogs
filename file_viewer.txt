@@ -1,0 +1,10 @@
+# Example 1: Viewing a Python script
+python file_viewer.py file_viewer.py
+
+# Example 2: Viewing a text-based 3D model (if you have one)
+python file_viewer.py path/to/my_model.obj
+
+# Example 3: Analyzing a complex binary file
+python file_viewer.py path/to/binary_model.stl
+
+This utility provides different levels of detail based on the file type, offering full content viewing for text files (`.py`, `.obj`, `.mtl`) and metadata analysis for complex 3D formats (`.stl`, `.dae`, etc.). Let me know if you'd like to adjust the number of lines displayed or focus on a specific file type!
