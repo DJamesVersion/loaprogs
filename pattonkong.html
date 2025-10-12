@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PattonKong: LandsofAges</title>
+  <style>
+    body {
+      background-color: #0b3d0b;
+      color: #f4f4f4;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    h1 {
+      color: #ff4444;
+    }
+    button {
+      margin: 10px;
+      padding: 10px;
+      background-color: #228822;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #game {
+      margin-top: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌴 PattonKong: LandsofAges 🌴</h1>
+  <p>You are Elmo, jungle warrior of myth. Choose your path wisely.</p>
+
+  <div id="game">
+    <div id="scene">
+      <p>Kong’s roar echoes through the Pixel Swamp. What will Elmo do?</p>
+      <button onclick="choosePath(1)">Beat Echo Drum</button>
+      <button onclick="choosePath(2)">Hide in ruins</button>
+      <button onclick="choosePath(3)">Offer Banana Sigil</button>
+      <button onclick="choosePath(4)">Run to Pentagon Temple</button>
+    </div>
+
+    <div id="result" class="hidden"></div>
+    <div id="battle" class="hidden">
+      <p>🔥 Final Battle: Godzilla & Kraken 🔥</p>
+      <button onclick="battle(1)">Use Napalm Lotus</button>
+      <button onclick="battle(2)">Use Kraken Ink</button>
+      <button onclick="battle(3)">Use Echo Drum</button>
+    </div>
+    <div id="end" class="hidden"></div>
+  </div>
+
+  <script>
+    let inventory = ["Banana Sigil"];
+    let resonance = 0;
+    let health = 100;
+
+    function choosePath(choice) {
+      document.getElementById("scene").classList.add("hidden");
+      let result = document.getElementById("result");
+      result.classList.remove("hidden");
+
+      if (choice === 1) {
+        inventory.push("Echo Drum");
+        resonance += 10;
+        result.innerHTML = "<p>🎶 Jungle spirits rise. You gain Echo Drum.</p>";
+      } else if (choice === 2) {
+        health -= 20;
+        result.innerHTML = "<p>👻 Pixel ghosts swarm. Elmo loses health.</p>";
+      } else if (choice === 3) {
+        if (inventory.includes("Banana Sigil")) {
+          inventory.push("Napalm Lotus");
+          resonance += 15;
+          result.innerHTML = "<p>🍌 Kong accepts tribute. You gain Napalm Lotus.</p>";
+        } else {
+          health -= 30;
+          result.innerHTML = "<p>😡 Kong is angry. Elmo loses health.</p>";
+        }
+      } else if (choice === 4) {
+        inventory.push("Kraken Ink");
+        resonance += 20;
+        result.innerHTML = "<p>🖋️ You gain Kraken Ink from the temple depths.</p>";
+      }
+
+      setTimeout(() => {
+        result.classList.add("hidden");
+        document.getElementById("battle").classList.remove("hidden");
+      }, 2000);
+    }
+
+    function battle(move) {
+      document.getElementById("battle").classList.add("hidden");
+      let end = document.getElementById("end");
+      end.classList.remove("hidden");
+
+      let outcome = "";
+      if (move === 1 && inventory.includes("Napalm Lotus")) {
+        outcome = "🔥 Godzilla blinded! Elmo victorious.";
+      } else if (move === 2 && inventory.includes("Kraken Ink")) {
+        outcome = "📜 Fate rewritten. Beasts vanish.";
+      } else if (move === 3 && inventory.includes("Echo Drum")) {
+        outcome = "🎶 Kong joins Elmo. Together they defeat the monsters.";
+      } else {
+        outcome = "😢 Wrong item. Elmo is overwhelmed.";
+      }
+
+      end.innerHTML = `
+        <p>${outcome}</p>
+        <p>🏆 Game Over</p>
+        <p>Resonance: ${resonance}</p>
+        <p>Health: ${health}</p>
+        <p>Inventory: ${inventory.join(", ")}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
