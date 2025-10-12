@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenemkette: Quaternary Meter Chronometer</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; 
+            color: #c9d1d9;
+            margin: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: auto; 
+        }
+
+        .container {
+            max-width: 500px; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* --- CHRONOMETER CORE STYLING --- */
+
+        .chronometer-body {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            margin: 2rem auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #161b22 60%, #0d1117);
+            box-shadow: 0 0 60px rgba(35, 134, 54, 0.5), inset 0 0 30px rgba(0, 0, 0, 0.9);
+            border: 5px solid #238636; 
+        }
+        
+        .dial-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        /* T-MONTH (350px - Outer Progress Arc) */
+        #monthTrack {
+            width: 350px;
+            height: 350px;
+            border: 4px solid #30363d;
+        }
+
+        /* T-WEEK (320px - 9 Segment Meter) */
+        #weekTrack {
+            width: 320px;
+            height: 320px;
+            border: 4px solid #30363d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        /* T-DAY (280px - 5 Segment Meter) */
+        #dayTrack {
+            width: 280px;
+            height: 280px;
+            border: 4px solid #30363d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        /* T-HOUR (200px - Inner Ticks & Hands Base) */
+        #hourTrack {
+            width: 200px;
+            height: 200px;
+            background: #0d1117;
+            border: 2px solid #58a6ff;
+            z-index: 30;
+        }
+        
+        /* The Triangulator: Central Static Element */
+        #triangulator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+            z-index: 60;
+        }
+        
+        #triangulator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #238636;
+            filter: drop-shadow(0 0 5px #238636);
+        }
+
+        /* --- VISUAL ELEMENTS: ARCS AND METERS --- */
+
+        /* T-Month Progress Arc (Outermost) */
+        .month-arc {
+            width: 50%;
+            height: 100%;
+            position: absolute;
+            transform-origin: 100% 50%;
+            overflow: hidden;
+            left: 50%;
+            border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+            background: conic-gradient(from 90deg, #ff7b72 0deg, rgba(255, 123, 114, 0) 10deg);
+            transition: transform 5s linear;
+        }
+        
+        /* T-Week Segments */
+        .week-segment {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px; /* Half of 320px */
+            height: 15px; 
+            transform-origin: 0 50%;
+            background-color: transparent;
+            transition: background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+            border-radius: 7.5px 0 0 7.5px;
+            z-index: 15;
+        }
+        
+        .week-segment-inner {
+            width: 100%;
+            height: 100%;
+            background-color: #30363d; 
+            border-radius: 7.5px 0 0 7.5px;
+        }
+        
+        /* T-Day Segments */
+        .day-segment {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140px; 
+            height: 30px; 
+            transform-origin: 0 50%;
+            background-color: transparent;
+            transition: background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+            border-radius: 15px 0 0 15px;
+            z-index: 25;
+        }
+        
+        .day-segment-inner {
+            width: 100%;
+            height: 100%;
+            background-color: #30363d; 
+            border-radius: 15px 0 0 15px;
+        }
+        
+        /* --- CLOCK HAND STYLING --- */
+        .clock-hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%; 
+            border-radius: 1px;
+            z-index: 50;
+            transition: transform 0.05s linear; 
+        }
+
+        #hourHand {
+            width: 40px; 
+            height: 4px;
+            background-color: #238636;
+            transform: rotate(-90deg); 
+            box-shadow: 0 0 8px rgba(35, 134, 54, 0.8);
+        }
+
+        #minuteHand {
+            width: 75px; 
+            height: 3px;
+            background-color: #58a6ff;
+            transform: rotate(-90deg);
+            box-shadow: 0 0 8px rgba(88, 166, 255, 0.8);
+        }
+
+        #secondHand {
+            width: 95px; 
+            height: 2px;
+            background-color: #ff7b72;
+            transform: rotate(-90deg);
+            box-shadow: 0 0 8px rgba(255, 123, 114, 0.8);
+        }
+        
+        /* --- TICK MARKS STYLING --- */
+        .tick {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 50%;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        /* Inner Hour Ticks (8 major, 56 minor) */
+        .hour-tick {
+            width: 100px; 
+            height: 1px;
+        }
+        .hour-tick.major::after {
+            content: '';
+            position: absolute;
+            right: 0px;
+            top: -2px;
+            width: 10px;
+            height: 4px;
+            background-color: #238636; 
+        }
+        .hour-tick.minor::after {
+            content: '';
+            position: absolute;
+            right: 0px;
+            top: -1px;
+            width: 5px;
+            height: 2px;
+            background-color: #30363d; 
+        }
+
+        /* Console styling for minimalism */
+        .console-text {
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.25;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header class="text-center mb-6 w-full">
+        <h1 class="text-4xl font-extrabold text-[#238636] mb-2">LENEMKETTE</h1>
+        <h2 class="text-xl font-semibold text-gray-400">QUATERNARY METER CHRONOMETER</h2>
+    </header>
+
+    <!-- Chronometer Body (Purely Visual) -->
+    <div class="chronometer-body">
+        
+        <!-- 1. T-MONTH METER (350px - Outer Arc Progress) -->
+        <div id="monthTrack" class="dial-track">
+            <div id="monthProgressArc" class="progress-arc">
+                <div id="monthArc" class="month-arc"></div>
+            </div>
+        </div>
+
+        <!-- 2. T-WEEK METER (320px - 9 Illuminated Segments) -->
+        <div id="weekTrack" class="dial-track">
+            <!-- Week segments generated by JS -->
+        </div>
+        
+        <!-- 3. T-DAY METER (280px - 5 Illuminated Segments) -->
+        <div id="dayTrack" class="dial-track">
+            <!-- Day segments generated by JS -->
+        </div>
+
+        <!-- 4. T-HOUR METER (200px - Inner Ticks for Hands) -->
+        <div id="hourTrack" class="dial-track">
+            <!-- Ticks generated by JS -->
+        </div>
+        
+        <!-- 5. CENTRAL CLOCK HANDS (Dials) -->
+        <div id="hourHand" class="clock-hand"></div>
+        <div id="minuteHand" class="clock-hand"></div>
+        <div id="secondHand" class="clock-hand"></div>
+
+        <!-- 6. CENTRAL TRIANGULATOR -->
+        <div id="triangulator"></div>
+        
+    </div>
+    
+    <!-- Readout Console (Minimalist Text Output) -->
+    <footer class="mt-8 p-4 bg-[#161b22] rounded-xl border border-[#30363d] w-full max-w-lg">
+        <h4 class="text-lg font-bold text-[#79c0ff] mb-2 border-b border-gray-700 pb-1">CONTEXTUAL READOUT</h4>
+        
+        <div id="consoleDisplay" class="console-text space-y-1">
+            <!-- Time Readouts -->
+            <p><span class="text-[#238636]">SYSTEM TIME (T-H.M.S):</span> <span id="tSystemTime" class="text-[#58a6ff]">--</span></p>
+            <p><span class="text-[#238636]">EARTH TIME:</span> <span id="earthTime" class="text-[#c9d1d9]">--</span></p>
+            
+            <!-- Cycle Readouts -->
+            <p><span class="text-[#ff7b72]">T-YEAR:</span> <span id="tYear" class="text-[#ff7b72]">--</span></p>
+            <p><span class="text-[#ff7b72]">AGE / MONTH:</span> <span id="tAgeMonth" class="text-[#ff7b72]">--</span></p>
+            <p><span class="text-[#ff7b72]">T-WEEK / T-DAY:</span> <span id="tWeekDay" class="text-[#ff7b72]">--</span></p>
+
+            
+            <!-- Macro Cycles -->
+            <div class="pt-2 border-t border-gray-700 mt-2">
+                <p><span class="text-[#d2a8ff]">TETNOBAUSSE:</span> <span id="tTetnobausse">--</span></p>
+                <p><span class="text-[#d2a8ff]">VRAEN:</span> <span id="tVraen">--</span></p>
+                <p><span class="text-[#d2a8ff]">STAHOY:</span> <span id="tStahoy">--</span></p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // --- I. TAHKMAHNELLE LINGUISTIC & CHRONOLOGICAL DATABASE ---
+    
+    const TAHKMAHNELLE_DICTIONARY = {
+        'a': 'ariatnah', 'b': 'batobwatchaeh', 'c': "c'illiatnah", 'd': 'diadowatchaeh', 'e': 'eecheechuwah',
+        'f': "f'illianarre", 'g': 'gagoikenne', 'h': "h'uilliatachaeh", 'i': 'illianarre', 'j': 'ampejinne',
+        'k': 'kajoinkenne', 'l': 'lenemketobontette', 'm': 'momaw', 'n': 'nona',
+        'o': 'oichenne', 'p': 'perfuvium', 'q': 'quaristenne',
+    };
+    
+    const ROOT_NAMES = Object.keys(TAHKMAHNELLE_DICTIONARY)
+        .sort()
+        .map(key => TAHKMAHNELLE_DICTIONARY[key]);
+
+    const CYCLE_SETS = ROOT_NAMES.slice(0, 7); 
+
+    const TAHKMAHNELLE_AGE_CYCLE = [
+        { name: 'The Age of Precedent', date: { month: 9, day: 22 } },
+        { name: 'The Age of Transition', date: { month: 12, day: 21 } },
+        { name: 'The Age of Genesis', date: { month: 3, day: 20 } },
+        { name: 'The Age of Zenith', date: { month: 6, day: 21 } }
+    ].sort((a, b) => (a.date.month * 100 + a.date.day) - (b.date.month * 100 + b.date.day));
+
+    // --- II. TIME SYSTEM CONSTANTS ---
+
+    const T_SECONDS_PER_MINUTE = 9;
+    const T_MINUTES_PER_HOUR = 7;
+    const T_HOURS_PER_DAY = 8;
+    const T_TICKS_PER_SECOND = 1000; 
+
+    const T_DAYS_PER_WEEK = 5;
+    const T_WEEKS_PER_MONTH = 9; // 9 T-Weeks * 5 T-Days = 45 Earth days
+    const T_MONTHS_PER_AGE = 3; 
+    const DAYS_IN_T_MONTH = T_WEEKS_PER_MONTH * T_DAYS_PER_WEEK; 
+
+    const EARTH_SECONDS_PER_DAY = 86400;
+    const T_SECONDS_PER_DAY = T_HOURS_PER_DAY * T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE; // 504 T-Seconds
+    
+    const EARTH_SECONDS_PER_T_SECOND = EARTH_SECONDS_PER_DAY / T_SECONDS_PER_DAY;
+    
+    const T_YEAR_REFERENCE = 2025;
+    const YEAR_OFFSET = 5849 - T_YEAR_REFERENCE;
+
+    // --- III. CHRONOLOGICAL MAPPING FUNCTIONS (Unchanged) ---
+
+    function getTDayName(dayIndex) {
+        return ROOT_NAMES[dayIndex % T_DAYS_PER_WEEK];
+    }
+
+    function getTMonthName(monthIndex) {
+        const offset = ROOT_NAMES.indexOf('oichenne');
+        if (offset === -1) return `Month ${monthIndex + 1}`;
+        return ROOT_NAMES[(monthIndex % T_MONTHS_PER_AGE) + offset];
+    }
+    
+    function getMacroCycleName(tYear, cycleLength) {
+        const cycleIndex = Math.floor(tYear / cycleLength) % 7;
+        return CYCLE_SETS[cycleIndex];
+    }
+
+    function getCurrentTAgeAndYear(date) {
+        const currentYear = date.getFullYear();
+        const nowMs = date.getTime();
+        let currentAgeData = TAHKMAHNELLE_AGE_CYCLE[0];
+        let tYear = currentYear + YEAR_OFFSET;
+        let latestStartMs = 0;
+
+        for (let i = 0; i < TAHKMAHNELLE_AGE_CYCLE.length; i++) {
+            const ageData = TAHKMAHNELLE_AGE_CYCLE[i];
+            let checkDate = new Date(currentYear, ageData.date.month - 1, ageData.date.day).getTime();
+            
+            if (checkDate > nowMs && ageData.date.month > date.getMonth() + 1) { 
+                 checkDate = new Date(currentYear - 1, ageData.date.month - 1, ageData.date.day).getTime();
+            }
+
+            if (checkDate <= nowMs && checkDate > latestStartMs) {
+                latestStartMs = checkDate;
+                currentAgeData = ageData;
+            }
+        }
+        
+        const newYearStart = new Date(currentYear, 8, 22); 
+        if (date.getTime() < newYearStart.getTime()) {
+             tYear -= 1; 
+        }
+
+        return { age: currentAgeData.name, year: tYear };
+    }
+
+
+    function calculateTTimeComponents(now) {
+        const date = now.getDate();
+        const month = now.getMonth();
+        const year = now.getFullYear();
+        
+        // --- 1. Solar/Hourly Time ---
+        const midnight = new Date(year, month, date);
+        const realSecondsOfDay = (now.getTime() - midnight.getTime()) / 1000;
+        const tSecondsAbsolute = realSecondsOfDay / EARTH_SECONDS_PER_T_SECOND;
+        
+        const tHour = Math.floor(tSecondsAbsolute / (T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE)) % T_HOURS_PER_DAY;
+        let remainingSeconds = tSecondsAbsolute % (T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE);
+        
+        const tMinute = Math.floor(remainingSeconds / T_SECONDS_PER_MINUTE) % T_MINUTES_PER_HOUR;
+        remainingSeconds = remainingSeconds % T_SECONDS_PER_MINUTE;
+        
+        const tSecond = Math.floor(remainingSeconds) % T_SECONDS_PER_MINUTE;
+        const tTick = remainingSeconds - tSecond; // Use fractional part for smooth movement
+
+        // --- 2. Calendar Time (Day, Week, Month) ---
+        const { age: tAgeName, year: tYear } = getCurrentTAgeAndYear(now);
+        
+        const referenceDate = new Date(T_YEAR_REFERENCE, 0, 1);
+        const msSinceReference = now.getTime() - referenceDate.getTime();
+        const totalDaysSinceReference = Math.floor(msSinceReference / (1000 * 60 * 60 * 24)); 
+        
+        const dayOfTMonthIndex = totalDaysSinceReference % DAYS_IN_T_MONTH; // 0-44
+        const tDayOfMonth = dayOfTMonthIndex + 1; // 1 to 45
+        
+        const tWeekIndex = Math.floor(dayOfTMonthIndex / T_DAYS_PER_WEEK); // 0-8
+        
+        const tDayIndex = dayOfTMonthIndex % T_DAYS_PER_WEEK; // 0-4
+        const tDayName = getTDayName(tDayIndex);
+        
+        const tMonthIndexAbsolute = Math.floor(totalDaysSinceReference / DAYS_IN_T_MONTH);
+        const tMonthIndexWithinCycle = tMonthIndexAbsolute % 12;
+        const tMonthName = getTMonthName(tMonthIndexWithinCycle);
+        
+        // --- 3. Macro Cycles ---
+        const tetnobausseName = getMacroCycleName(tYear, 1000);
+        const vraenName = getMacroCycleName(tYear, 100);
+        const stahoyName = getMacroCycleName(tYear, 10);
+        
+        return {
+            T_H: tHour, T_M: tMinute, T_S: tSecond, T_TICK: tTick,
+            T_Y: tYear, T_Age: tAgeName, 
+            T_DayName: tDayName, T_DayIndex: tDayIndex,
+            T_DayNum: tDayOfMonth,
+            T_WeekIndex: tWeekIndex, // New: 0-8
+            T_MonthName: tMonthName,
+            TotalTSeconds: tSecondsAbsolute,
+            DayOfTMonthIndex: dayOfTMonthIndex,
+            T_Tetnobausse: tetnobausseName,
+            T_Vraen: vraenName,
+            T_Stahoy: stahoyName
+        };
+    }
+
+    // --- IV. VISUALIZATION AND UPDATE ---
+    
+    const T_DAY_COLORS = [
+        { name: 'ariatnah', color: '#ff7b72' },      
+        { name: 'batobwatchaeh', color: '#79c0ff' }, 
+        { name: "c'illiatnah", color: '#ffc83d' },   
+        { name: 'diadowatchaeh', color: '#a6e3a1' }, 
+        { name: 'eecheechuwah', color: '#d2a8ff' }   
+    ];
+
+
+    /**
+     * Initializes the T-Day segments, T-Week segments, and T-Hour ticks.
+     */
+    function initializeChronometer() {
+        // --- 1. T-WEEK Meter (9 Segments - Gold Highlight) ---
+        const weekTrack = document.getElementById('weekTrack');
+        weekTrack.innerHTML = ''; 
+        const weekCount = T_WEEKS_PER_MONTH; // 9
+        const weekAngleStep = 360 / weekCount; // 40 degrees
+
+        for (let i = 0; i < weekCount; i++) {
+            const rotation = (i * weekAngleStep) - 10; 
+            
+            const segmentWrapper = document.createElement('div');
+            segmentWrapper.className = 'week-segment';
+            segmentWrapper.id = `weekSegment${i}`;
+            segmentWrapper.style.transform = `rotate(${rotation}deg)`;
+            
+            const segmentInner = document.createElement('div');
+            segmentInner.className = 'week-segment-inner flex items-center justify-end pr-2';
+            segmentWrapper.appendChild(segmentInner);
+            weekTrack.appendChild(segmentWrapper);
+        }
+
+        // --- 2. T-DAY Meter (5 Segments - Color Highlight) ---
+        const dayTrack = document.getElementById('dayTrack');
+        dayTrack.innerHTML = ''; 
+        const dayCount = T_DAYS_PER_WEEK; // 5
+        const dayAngleStep = 360 / dayCount; // 72 degrees
+
+        for (let i = 0; i < dayCount; i++) {
+            const rotation = (i * dayAngleStep) - 10; 
+            
+            const segmentWrapper = document.createElement('div');
+            segmentWrapper.className = 'day-segment';
+            segmentWrapper.id = `daySegment${i}`;
+            segmentWrapper.style.transform = `rotate(${rotation}deg)`;
+            
+            const segmentInner = document.createElement('div');
+            segmentInner.className = 'day-segment-inner flex items-center justify-end pr-2';
+            segmentWrapper.appendChild(segmentInner);
+            dayTrack.appendChild(segmentWrapper);
+        }
+
+        // --- 3. T-HOUR Ticks (Inner Ring - 8 major, 56 minor) ---
+        const hourTrack = document.getElementById('hourTrack');
+        const totalMinutes = T_HOURS_PER_DAY * T_MINUTES_PER_HOUR; // 56
+        const minuteAngleStep = 360 / totalMinutes;
+
+        for (let i = 0; i < totalMinutes; i++) {
+            const tick = document.createElement('div');
+            tick.className = 'tick hour-tick minor';
+            
+            if (i % T_MINUTES_PER_HOUR === 0) {
+                tick.classList.add('major');
+            }
+
+            tick.style.transform = `rotate(${i * minuteAngleStep}deg)`;
+            hourTrack.appendChild(tick);
+        }
+    }
+
+
+    function updateClock() {
+        const now = new Date();
+        const td = calculateTTimeComponents(now);
+
+        // --- CONSOLE READOUTS ---
+        
+        // Calculate T-Tick display (0-999 approximation)
+        const tTickDisplay = Math.floor(td.T_TICK * T_TICKS_PER_SECOND / T_SECONDS_PER_MINUTE).toString().padStart(3, '0');
+        document.getElementById('tSystemTime').textContent = 
+            `${td.T_H}.${td.T_M}.${td.T_S}.${tTickDisplay}`;
+        
+        document.getElementById('earthTime').textContent = now.toLocaleTimeString();
+        document.getElementById('tYear').textContent = td.T_Y;
+        document.getElementById('tAgeMonth').textContent = `${td.T_Age.toUpperCase()} / ${td.T_MonthName.toUpperCase()} (Day ${td.T_DayNum}/45)`;
+        document.getElementById('tWeekDay').textContent = `WEEK ${td.T_WeekIndex + 1}/9 | DAY ${td.T_DayIndex + 1}/5 (${td.T_DayName.toUpperCase()})`;
+
+
+        // --- ANALOG DIAL CALCULATIONS ---
+        
+        // Total elapsed T-Seconds for the day (including fraction)
+        const tSecondsTotal = (td.T_H * T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE) + 
+                              (td.T_M * T_SECONDS_PER_MINUTE) + 
+                              td.T_S + 
+                              td.T_TICK;
+
+        // 1. T-SECOND Hand 
+        const secondProgress = (td.T_S + td.T_TICK) / T_SECONDS_PER_MINUTE; 
+        const secondRotation = (secondProgress * 360) - 90; 
+        document.getElementById('secondHand').style.transform = `rotate(${secondRotation}deg)`;
+
+        // 2. T-MINUTE Hand 
+        const minuteProgress = (td.T_M + secondProgress) / T_MINUTES_PER_HOUR; 
+        const minuteRotation = (minuteProgress * 360) - 90;
+        document.getElementById('minuteHand').style.transform = `rotate(${minuteRotation}deg)`;
+
+        // 3. T-HOUR Hand 
+        const hourProgress = (td.T_H + minuteProgress) / T_HOURS_PER_DAY; 
+        const hourRotation = (hourProgress * 360) - 90;
+        document.getElementById('hourHand').style.transform = `rotate(${hourRotation}deg)`;
+        
+
+        // 4. T-MONTH METER (Outer Arc Progress)
+        const monthArc = document.getElementById('monthArc');
+        const dayProgress = td.DayOfTMonthIndex + (tSecondsTotal / T_SECONDS_PER_DAY);
+        const monthProgressFraction = dayProgress / DAYS_IN_T_MONTH; 
+        const monthRotationDegrees = monthProgressFraction * 360;
+        monthArc.style.transform = `rotate(${monthRotationDegrees}deg)`;
+
+
+        // 5. T-WEEK METER (9 Segment Highlighting - Gold)
+        const currentWeekIndex = td.T_WeekIndex;
+        const weekCount = T_WEEKS_PER_MONTH;
+        const GOLD_COLOR = '#ffc83d';
+
+        for(let i=0; i < weekCount; i++) {
+            const segmentInner = document.getElementById(`weekSegment${i}`).querySelector('.week-segment-inner');
+            if (i === currentWeekIndex) {
+                segmentInner.style.backgroundColor = GOLD_COLOR;
+                segmentInner.style.boxShadow = `0 0 10px ${GOLD_COLOR}`;
+            } else {
+                segmentInner.style.backgroundColor = '#30363d';
+                segmentInner.style.boxShadow = 'none';
+            }
+        }
+
+        // 6. T-DAY METER (5 Segment Highlighting - T_DAY_COLORS)
+        const currentDayIndex = td.T_DayIndex;
+        
+        T_DAY_COLORS.forEach((day, index) => {
+            const segmentInner = document.getElementById(`daySegment${index}`).querySelector('.day-segment-inner');
+            
+            if (index === currentDayIndex) {
+                segmentInner.style.backgroundColor = T_DAY_COLORS[index].color;
+                segmentInner.style.boxShadow = `0 0 12px ${T_DAY_COLORS[index].color}`;
+            } else {
+                segmentInner.style.backgroundColor = '#30363d';
+                segmentInner.style.boxShadow = 'none';
+            }
+        });
+        
+        // 7. Macro Cycles
+        const getSetNumber = (tYear, cycleLength) => (Math.floor(tYear / cycleLength) % 7) + 1;
+
+        document.getElementById('tTetnobausse').textContent = `${td.T_Tetnobausse.toUpperCase()} (SET ${getSetNumber(td.T_Y, 1000)})`;
+        document.getElementById('tVraen').textContent = `${td.T_Vraen.toUpperCase()} (SET ${getSetNumber(td.T_Y, 100)})`;
+        document.getElementById('tStahoy').textContent = `${td.T_Stahoy.toUpperCase()} (SET ${getSetNumber(td.T_Y, 10)})`;
+    }
+
+    // --- V. INITIALIZATION ---
+
+    window.onload = function() {
+        initializeChronometer(); 
+        
+        // Update runs to create smooth movement for the seconds hand.
+        setInterval(updateClock, 46);
+        updateClock(); 
+    };
+</script>
+</body>
+</html>
+
