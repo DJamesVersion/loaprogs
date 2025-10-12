@@ -3,390 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenemkette: The Journey Knot</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Tahkmahnelle Compact Solar Chronometer</title>
+    <!-- Load Tailwind CSS for utility classes and aesthetics --><script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom Font */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Dark background */
+            font-family: 'Space Mono', monospace;
+            background-color: #05050c; /* Deep space background */
             color: #c9d1d9;
             margin: 0;
-            padding: 0;
+            padding: 1rem;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 95vw;
             width: 100%;
-            padding: 1rem;
+            max-width: 550px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Analog Clock Styling */
-        .analog-clock {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid #238636; /* Bright Green Ring */
-            background: #161b22;
-            margin: 1rem auto;
-        }
-
-        .hand {
-            position: absolute;
-            bottom: 50%;
-            left: 50%;
-            transform-origin: bottom;
-            transition: transform 46ms linear; /* 46ms transition for smoothness */
-        }
-
-        /* T-Hour Hand (8 Hours per day) */
-        .t-hour-hand {
-            width: 4px;
-            height: 45px;
-            background-color: #58a6ff; /* Blue */
-            border-radius: 2px;
-            transform: translate(-50%, 0) rotate(0deg);
+        #solarSystemCanvas {
+            border: 4px solid #4a148c; /* Dark Purple Border */
+            border-radius: 1rem;
+            background-color: #0c0d12; /* Solid dark canvas color */
+            box-shadow: 0 0 70px rgba(74, 20, 140, 0.4);
         }
         
-        /* Center dot */
-        .analog-clock::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            background-color: #238636;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-
-        /* Styling for the interactive grid area */
-        .system-key {
-            font-weight: 700;
-            color: #79c0ff;
-        }
-        
-        .value-display {
-            font-family: monospace;
-            color: #c9d1d9;
+        .console-text {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            text-shadow: 0 0 5px rgba(179, 157, 219, 0.3);
         }
     </style>
 </head>
 <body>
 
-<div class="container lg:w-3/4">
-
-    <!-- Title and Core Digital Clock -->
-    <header class="text-center mb-6">
-        <h1 class="text-4xl font-extrabold text-[#238636] mb-2">LENEMKETTE</h1>
-        <h2 class="text-xl font-semibold text-gray-400">The Journey Knot Omni-Chronometer</h2>
-        <div id="digitalTime" class="text-6xl font-mono mt-4 text-[#58a6ff]">
-            0:0:0.000
-        </div>
-        <p id="tYearDisplay" class="text-lg text-gray-400 mt-1"></p>
+<div class="container">
+    <header class="text-center mb-6 w-full">
+        <h1 class="text-4xl font-bold text-[#b39ddb] mb-1">TAHKMAHNELLE COMPACT CHRONOMETER</h1>
+        <h2 class="text-xl text-[#8e24aa]">8 ORBITS & INTEGRATED T-TIME DISPLAY</h2>
     </header>
 
-    <main class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Column 1: Solar Time (Analog/Digital) and Earth Date -->
-        <div class="bg-[#161b22] p-6 rounded-xl shadow-lg border border-[#238636]">
-            <h3 class="text-2xl font-bold mb-4 text-[#c9d1d9] border-b border-gray-700 pb-2">I. Solar Time</h3>
-            <div class="text-center">
-                <div id="analogClock" class="analog-clock">
-                    <div id="hourHand" class="hand t-hour-hand"></div>
-                </div>
-            </div>
-            <p class="text-sm mt-4 text-gray-400">Time runs at 46ms T-Tick precision (1/1000th of a T-Second).</p>
-            <div class="mt-4 pt-2 border-t border-gray-700">
-                <p class="text-sm font-semibold">Real-World Time:</p>
-                <p id="earthTime" class="text-md font-mono text-gray-500"></p>
+    <!-- Canvas for the Solar System Simulation --><canvas id="solarSystemCanvas" width="500" height="500"></canvas>
+    
+    <!-- Readout Console --><footer class="mt-8 p-4 bg-[#1e0a3c] rounded-xl border border-[#4a148c] w-full max-w-lg shadow-xl">
+        <h4 class="text-lg font-bold text-[#ff8a65] mb-2 border-b border-[#4a148c] pb-1">CHRONOMETRIC READOUT</h4>
+        
+        <div id="consoleDisplay" class="console-text space-y-1">
+            <p><span class="text-[#b39ddb]">T-SYSTEM TIME (H.M.S):</span> <span id="tSystemTime" class="text-white font-bold">--</span> (Visible on Canvas)</p>
+            <p><span class="text-[#ff8a65]">T-MONTH/T-DAY:</span> <span id="tMonthProgress" class="text-white">--</span></p>
+            <div class="pt-2 border-t border-[#4a148c] mt-2">
+                <p class="text-[#d1c4e9]">All 8 planets are scaled to fit within the visible display.</p>
             </div>
         </div>
-
-        <!-- Column 2: Calendar Cycles (Age, Month, Week, Day) -->
-        <div class="bg-[#161b22] p-6 rounded-xl shadow-lg border border-[#30363d]">
-            <h3 class="text-2xl font-bold mb-4 text-[#c9d1d9] border-b border-gray-700 pb-2">II. Calendar Cycles</h3>
-            
-            <div id="calendarDisplay" class="space-y-3">
-                <p><span class="system-key">T-Age:</span> <span id="tAge" class="value-display text-[#79c0ff]">--</span></p>
-                <p><span class="system-key">T-Month:</span> <span id="tMonth" class="value-display text-[#79c0ff]">--</span></p>
-                <p><span class="system-key">T-Week:</span> <span id="tWeek" class="value-display">--</span></p>
-                <p><span class="system-key">T-Day:</span> <span id="tDay" class="value-display">--</span></p>
-            </div>
-        </div>
-
-        <!-- Column 3: Macro Cycles (Decade, Century, Millennia) & Space -->
-        <div class="bg-[#161b22] p-6 rounded-xl shadow-lg border border-[#30363d] lg:col-span-1 md:col-span-2">
-            <h3 class="text-2xl font-bold mb-4 text-[#c9d1d9] border-b border-gray-700 pb-2">III. Macro Cycles & Space</h3>
-            
-            <h4 class="text-lg font-semibold mt-2 text-gray-400">Macro Cycles (Ariats Alignment)</h4>
-            <div id="macroDisplay" class="space-y-3 mt-2">
-                <p><span class="system-key">Tetnobausse (Millennium):</span> <span id="tTetnobausse" class="value-display text-[#ff7b72]">--</span></p>
-                <p><span class="system-key">Vraen (Century):</span> <span id="tVraen" class="value-display text-[#ff7b72]">--</span></p>
-                <p><span class="system-key">Stahoy (Decade):</span> <span id="tStahoy" class="value-display text-[#ff7b72]">--</span></p>
-            </div>
-
-            <h4 class="text-lg font-semibold mt-6 text-gray-400 border-t border-gray-700 pt-3">Systems of Spaces (X, Y, Z)</h4>
-            <div id="spaceDisplay" class="space-y-3 mt-2">
-                <p><span class="system-key">X (Resources):</span> <span id="xCoord" class="value-display">100</span> (A/D)</p>
-                <p><span class="system-key">Y (Library):</span> <span id="yCoord" class="value-display">200</span> (W/S)</p>
-                <p><span class="system-key">Z (Archives):</span> <span id="zCoord" class="value-display">300</span> (Q/E)</p>
-            </div>
-            <p class="text-xs text-gray-600 mt-4 text-center">Use **W,A,S,D,Q,E** keys to navigate the Systems of Spaces.</p>
-        </div>
-    </main>
+    </footer>
 </div>
 
 <script>
-    // --- I. TAHKMAHNELLE LINGUISTIC & CHRONOLOGICAL DATABASE ---
-    
-    const TAHKMAHNELLE_DICTIONARY = {
-        'a': 'ariatnah', 'b': 'batobwatchaeh', 'c': "c'illiatnah", 'd': 'diadowatchaeh', 'e': 'eecheechuwah',
-        'f': "f'illianarre", 'g': 'gagoikenne', 'h': "h'uilliatachaeh", 'i': 'illianarre', 'j': 'ampejinne',
-        'k': 'kajoinkenne', 'l': 'lenemketobontette', 'm': 'momaw', 'n': 'nona',
-        'o': 'oichenne', 'p': 'perfuvium', 'q': 'quaristenne',
-    };
-    
-    // Sorted list of roots for cycle naming
-    const ROOT_NAMES = Object.keys(TAHKMAHNELLE_DICTIONARY)
-        .sort()
-        .map(key => TAHKMAHNELLE_DICTIONARY[key]);
-
-    // 7 Cycle Sets for Macro Time (Ariats, Batos, etc.)
-    const CYCLE_SETS = ROOT_NAMES.slice(0, 7); 
-
-    // 4 Ages tied to Solstices/Equinoxes (Month, Day)
-    // T-Year starts after Summer Solstice (at Autumn Equinox)
-    const TAHKMAHNELLE_AGE_CYCLE = [
-        { name: 'The Age of Precedent', date: { month: 9, day: 22 } },
-        { name: 'The Age of Transition', date: { month: 12, day: 21 } },
-        { name: 'The Age of Genesis', date: { month: 3, day: 20 } },
-        { name: 'The Age of Zenith', date: { month: 6, day: 21 } }
-    ].sort((a, b) => (a.date.month * 100 + a.date.day) - (b.date.month * 100 + b.date.day));
-
-    // --- II. TIME SYSTEM CONSTANTS ---
-
+    // --- 1. TAHKMAHNELLE TIME CONSTANTS ---
     const T_SECONDS_PER_MINUTE = 9;
     const T_MINUTES_PER_HOUR = 7;
     const T_HOURS_PER_DAY = 8;
-    const T_TICKS_PER_SECOND = 1000; 
-
     const T_DAYS_PER_WEEK = 5;
-    const T_WEEKS_PER_MONTH = 9;
-    const T_MONTHS_PER_AGE = 3; 
-    const DAYS_IN_T_MONTH = T_WEEKS_PER_MONTH * T_DAYS_PER_WEEK; // 45 real days
+    const T_WEEKS_PER_MONTH = 9; 
+    const DAYS_IN_T_MONTH = T_WEEKS_PER_MONTH * T_DAYS_PER_WEEK; // 45 Earth days
 
+    const T_SECONDS_PER_DAY = T_HOURS_PER_DAY * T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE; // 504 T-Seconds
     const EARTH_SECONDS_PER_DAY = 86400;
-    const T_SECONDS_PER_DAY = T_HOURS_PER_DAY * T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE;
     const EARTH_SECONDS_PER_T_SECOND = EARTH_SECONDS_PER_DAY / T_SECONDS_PER_DAY;
-    
-    // T-Year offset (5849 is the reference T-Year, aligned with 2025)
-    const T_YEAR_REFERENCE = 2025;
-    const YEAR_OFFSET = 5849 - T_YEAR_REFERENCE;
+    const T_YEAR_REFERENCE = 2025; 
 
-    // --- III. STATE ---
-    let spatialCoords = { x: 100, y: 200, z: 300 };
+    // --- 2. PLANETARY DATA AND ORBITAL CONFIGURATION (COMPACTED) ---
+    const PLANETS = [
+        // Radii significantly reduced to fit all 8 within 500x500 canvas
+        { name: "lenemketobontette", status: "Uninhabitable", color: "#F06292", size: 5, radius: 55, revFactor: 2.0 },    
+        { name: "stihuu", status: "Habitable", color: "#66BB6A", size: 6, radius: 80, revFactor: 4/3 },               
+        { name: "tetnobautte", status: "Habitable", color: "#4FC3F7", size: 8, radius: 105, revFactor: 1.0 },              
+        { name: "vraelvrae", status: "Habitable", color: "#FFB300", size: 7, radius: 130, revFactor: 4/5 },            
+        { name: "lenemketobontettestihuu", status: "Uninhabitable", color: "#F06292", size: 6, radius: 155, revFactor: 2/3 }, 
+        { name: "stihuutetnobautte", status: "Uninhabitable", color: "#F06292", size: 5, radius: 180, revFactor: 4/7 }, 
+        { name: "tetnobauttestihuu", status: "Uninhabitable", color: "#F06292", size: 4, radius: 205, revFactor: 0.5 },    
+        { name: "TAHKMAHNELLE45", status: "Habitable (Dwarf)", color: "#9575CD", size: 3, radius: 230, revFactor: 4/9 } 
+    ];
 
-    // --- IV. CHRONOLOGICAL MAPPING FUNCTIONS ---
-
-    function getTDayName(dayIndex) {
-        // Roots A-E (Indices 0-4)
-        return ROOT_NAMES[dayIndex % T_DAYS_PER_WEEK];
-    }
-
-    function getTMonthName(monthIndex) {
-        // Roots O-Q (Indices 14-16)
-        const offset = T_DAYS_PER_WEEK + T_WEEKS_PER_MONTH;
-        return ROOT_NAMES[(monthIndex % T_MONTHS_PER_AGE) + offset];
-    }
-
-    function getMacroCycleName(tYear, cycleLength) {
-        // Use modulo 7 on the cycle number to select the name from the 7 sets
-        // We use Math.floor to ensure we only cycle when the threshold is crossed
-        const cycleIndex = Math.floor(tYear / cycleLength) % 7;
-        return CYCLE_SETS[cycleIndex];
-    }
-
-    function getCurrentTAgeAndYear(date) {
-        const currentYear = date.getFullYear();
-        const now = date.getTime();
-        let currentAgeData = TAHKMAHNELLE_AGE_CYCLE[0];
-        let tYear = currentYear + YEAR_OFFSET;
-
-        // Determine current Age by finding the latest start date before 'now'
-        for (let i = 0; i < TAHKMAHNELLE_AGE_CYCLE.length; i++) {
-            const ageData = TAHKMAHNELLE_AGE_CYCLE[i];
-            let checkDate = new Date(currentYear, ageData.date.month - 1, ageData.date.day);
-            
-            // Check previous year for cycles that started late in the year (e.g., Dec 21)
-            if (checkDate.getTime() > now) {
-                checkDate = new Date(currentYear - 1, ageData.date.month - 1, ageData.date.day);
-            }
-            
-            if (checkDate.getTime() <= now) {
-                currentAgeData = ageData;
-            }
-        }
-        
-        // Adjust T-Year: New Year starts at Autumn Equinox (Sept 22)
-        const newYearStart = new Date(currentYear, 8, 22); // Month 8 is September (0-indexed)
-        if (date.getTime() < newYearStart.getTime()) {
-             // If before Sept 22, the T-Year has not yet incremented for the current Earth year
-             tYear -= 1; 
-        }
-
-        return { age: currentAgeData.name, year: tYear };
-    }
-
+    // --- 3. CHRONOMETRIC UTILITIES (Calculation Logic) ---
 
     function calculateTTimeComponents(now) {
         const date = now.getDate();
         const month = now.getMonth();
         const year = now.getFullYear();
-
-        // --- 1. Solar/Hourly Time ---
         
-        // Real seconds since midnight (including milliseconds)
+        // Time of Day Calculation
         const midnight = new Date(year, month, date);
         const realSecondsOfDay = (now.getTime() - midnight.getTime()) / 1000;
-        
-        // Convert real seconds to Tahkmahnelle seconds
         const tSecondsAbsolute = realSecondsOfDay / EARTH_SECONDS_PER_T_SECOND;
         
         const tHour = Math.floor(tSecondsAbsolute / (T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE)) % T_HOURS_PER_DAY;
         let remainingSeconds = tSecondsAbsolute % (T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE);
         
         const tMinute = Math.floor(remainingSeconds / T_SECONDS_PER_MINUTE) % T_MINUTES_PER_HOUR;
-        remainingSeconds = remainingSeconds % T_SECONDS_PER_MINUTE;
-        
-        const tSecond = Math.floor(remainingSeconds) % T_SECONDS_PER_MINUTE;
-        const tTick = Math.floor((remainingSeconds - tSecond) * T_TICKS_PER_SECOND) % T_TICKS_PER_SECOND;
+        const tSecond = Math.floor(remainingSeconds % T_SECONDS_PER_MINUTE);
+        const tTick = (remainingSeconds % T_SECONDS_PER_MINUTE) - tSecond;
 
-
-        // --- 2. Calendar Time (Day, Week, Month) ---
-        
-        const { age: tAgeName, year: tYear } = getCurrentTAgeAndYear(now);
-        
-        // Calculate total days since the reference start date
+        // Calendrical Calculation (Day of T-Month for Orbital Phase)
         const referenceDate = new Date(T_YEAR_REFERENCE, 0, 1);
         const msSinceReference = now.getTime() - referenceDate.getTime();
-        const totalDaysSinceReference = Math.floor(msSinceReference / (1000 * 60 * 60 * 24)); 
+        const totalDaysSinceReference = msSinceReference / (1000 * 60 * 60 * 24); 
         
-        // T-Month Index (0-11)
-        const tMonthIndexAbsolute = Math.floor(totalDaysSinceReference / DAYS_IN_T_MONTH) % 12;
-        const tMonthName = getTMonthName(tMonthIndexAbsolute);
-        
-        // Day Index within the current T-Month (0-44)
-        const dayOfTMonthIndex = totalDaysSinceReference % DAYS_IN_T_MONTH;
-        const tDayOfMonth = dayOfTMonthIndex + 1; // 1 to 45
-        
-        // T-Day and T-Week
-        const tDayIndex = dayOfTMonthIndex % T_DAYS_PER_WEEK;
-        const tDayName = getTDayName(tDayIndex);
-        const tWeekOfMonth = Math.floor(dayOfTMonthIndex / T_DAYS_PER_WEEK) + 1;
-        
-        // --- 3. Macro Cycles ---
-
-        const tetnobausseName = getMacroCycleName(tYear, 1000);
-        const vraenName = getMacroCycleName(tYear, 100);
-        const stahoyName = getMacroCycleName(tYear, 10);
+        const dayOfTMonthIndexFractional = totalDaysSinceReference % DAYS_IN_T_MONTH; 
 
         return {
             T_H: tHour, T_M: tMinute, T_S: tSecond, T_TICK: tTick,
-            T_Y: tYear, T_Age: tAgeName, 
-            T_DayName: tDayName, T_DayNum: tDayOfMonth,
-            T_WkNum: tWeekOfMonth, T_WkMax: T_WEEKS_PER_MONTH,
-            T_MonthName: tMonthName, 
-            T_Tetnobausse: tetnobausseName,
-            T_Vraen: vraenName,
-            T_Stahoy: stahoyName
+            T_DayIndexFractional: dayOfTMonthIndexFractional, // 0.0 to 45.0
+            T_SecondsAbsolute: tSecondsAbsolute
         };
     }
 
-    // --- V. VISUALIZATION AND UPDATE ---
+    // --- 4. CANVAS RENDERING LOGIC ---
 
-    function updateClock() {
-        const now = new Date();
-        const td = calculateTTimeComponents(now);
+    const canvas = document.getElementById('solarSystemCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
 
-        // 1. Digital Time (6:7:9.000)
-        document.getElementById('digitalTime').textContent = 
-            `${td.T_H}:${td.T_M}:${td.T_S}.${String(td.T_TICK).padStart(3, '0')}`;
-        
-        document.getElementById('tYearDisplay').textContent = 
-            `T-Year ${td.T_Y} Tahkmahnelle45time | Earth Date: ${now.toLocaleDateString()}`;
-        document.getElementById('earthTime').textContent = now.toLocaleTimeString();
-
-        // 2. Analog Clock (8-hour cycle)
-        const hourHand = document.getElementById('hourHand');
-        
-        const totalTSeconds = (td.T_H * T_MINUTES_PER_HOUR * T_SECONDS_PER_MINUTE) +
-                              (td.T_M * T_SECONDS_PER_MINUTE) +
-                              td.T_S +
-                              (td.T_TICK / T_TICKS_PER_SECOND);
-        
-        // Rotation is based on T_Seconds_Per_Day / Total_T_Seconds, scaled to 360 degrees.
-        const rotationDegrees = (totalTSeconds / T_SECONDS_PER_DAY) * 360;
-        
-        // The rotation is applied from the top (0 degrees is 12 o'clock, which is T-Hour 0)
-        hourHand.style.transform = `translate(-50%, 0) rotate(${rotationDegrees}deg)`;
-
-
-        // 3. Calendar Display
-        document.getElementById('tAge').textContent = td.T_Age;
-        document.getElementById('tMonth').textContent = `${td.T_MonthName.toUpperCase()} (Day ${td.T_DayNum}/${DAYS_IN_T_MONTH})`;
-        document.getElementById('tWeek').textContent = `T-Week ${td.T_WkNum} of ${td.T_WkMax}`;
-        document.getElementById('tDay').textContent = td.T_DayName.toUpperCase();
-
-
-        // 4. Macro Cycles
-        // We ensure we calculate the set index based on the full number of cycles since year 0.
-        document.getElementById('tTetnobausse').textContent = `${td.T_Tetnobausse.toUpperCase()} (Set ${Math.floor(td.T_Y / 1000) % 7 + 1}/7)`;
-        document.getElementById('tVraen').textContent = `${td.T_Vraen.toUpperCase()} (Set ${Math.floor(td.T_Y / 100) % 7 + 1}/7)`;
-        document.getElementById('tStahoy').textContent = `${td.T_Stahoy.toUpperCase()} (Set ${Math.floor(td.T_Y / 10) % 7 + 1}/7)`;
-        
-        // 5. Spatial Coordinates (updated only on key press, but rendered here)
-        document.getElementById('xCoord').textContent = spatialCoords.x;
-        document.getElementById('yCoord').textContent = spatialCoords.y;
-        document.getElementById('zCoord').textContent = spatialCoords.z;
+    /**
+     * Draws the solid background.
+     */
+    function drawBackground() {
+        // Clear screen with a solid dark color
+        ctx.fillStyle = '#0c0d12'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // --- VI. SPATIAL INTERACTION ---
+    /**
+     * Draws the circular orbital paths with T-Month tick marks.
+     */
+    function drawOrbits(monthProgress) {
+        // Draw T-Month Indicator Line (Sweeping Hand)
+        const indicatorAngleRad = monthProgress * (Math.PI * 2) - (Math.PI / 2); // Start at 12 o'clock (-90 deg)
+        const indicatorLength = PLANETS[PLANETS.length - 1].radius + 20; 
+        
+        ctx.strokeStyle = '#9575CD'; // Light purple line
+        ctx.lineWidth = 1;
+        ctx.shadowColor = '#9575CD';
+        ctx.shadowBlur = 10;
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(
+            centerX + indicatorLength * Math.cos(indicatorAngleRad),
+            centerY + indicatorLength * Math.sin(indicatorAngleRad)
+        );
+        ctx.stroke();
+        ctx.shadowBlur = 0;
 
-    document.addEventListener('keydown', (event) => {
-        const step = 10;
-        let updated = false;
+        // Draw Orbits and Ticks
+        PLANETS.forEach(planet => {
+            // Draw the main orbital path (faint glow)
+            ctx.strokeStyle = 'rgba(179, 157, 219, 0.2)'; 
+            ctx.lineWidth = 1.0; 
+            ctx.shadowColor = 'rgba(179, 157, 219, 0.5)';
+            ctx.shadowBlur = 3; 
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, planet.radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
 
-        switch (event.key.toLowerCase()) {
-            case 'a': spatialCoords.x -= step; updated = true; break; // X- (Resources)
-            case 'd': spatialCoords.x += step; updated = true; break; // X+ (Resources)
-            case 'w': spatialCoords.y += step; updated = true; break; // Y+ (Library)
-            case 's': spatialCoords.y -= step; updated = true; break; // Y- (Library)
-            case 'q': spatialCoords.z -= step; updated = true; break; // Z- (Archives)
-            case 'e': spatialCoords.z += step; updated = true; break; // Z+ (Archives)
-        }
+            // Draw T-Month Ticks (45 ticks)
+            const tickCount = DAYS_IN_T_MONTH; // 45
+            const tickAngleStep = (Math.PI * 2) / tickCount;
+            const tickLength = 4;
 
-        if (updated) {
-            // Rerun updateClock to instantly reflect coordinate changes
-            updateClock(); 
-        }
-    });
+            for (let i = 0; i < tickCount; i++) {
+                const angle = i * tickAngleStep - (Math.PI / 2);
+                
+                // Determine tick length/color based on T-Day (every 5 days)
+                const isMajor = (i % T_DAYS_PER_WEEK === 0);
+                
+                ctx.strokeStyle = isMajor ? '#D1C4E9' : '#4A148C';
+                ctx.lineWidth = isMajor ? 2 : 1;
 
-    // --- VII. INITIALIZATION ---
+                ctx.beginPath();
+                ctx.moveTo(centerX + planet.radius * Math.cos(angle), centerY + planet.radius * Math.sin(angle));
+                ctx.lineTo(
+                    centerX + (planet.radius + tickLength) * Math.cos(angle),
+                    centerY + (planet.radius + tickLength) * Math.sin(angle)
+                );
+                ctx.stroke();
+            }
+        });
+    }
+
+    /**
+     * Draws the T-Time Clock digitally in the center (CYAN).
+     */
+    function drawTTimeClock(td) {
+        const tTickDisplay = Math.floor(td.T_TICK * 1000 / T_SECONDS_PER_MINUTE).toString().padStart(3, '0');
+        const tSystemTimeStr = `${td.T_H.toString().padStart(2, '0')}.${td.T_M.toString().padStart(2, '0')}.${td.T_S.toString().padStart(2, '0')}`;
+        const tMicrosecondsStr = `.${tTickDisplay}`;
+
+        // Digital Time Display Area
+        ctx.shadowColor = 'rgba(0, 255, 255, 0.8)'; // Cyan Shadow
+        ctx.shadowBlur = 10;
+        
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Main Time (H.M.S)
+        ctx.fillStyle = '#00FFFF'; // Bright Cyan
+        ctx.font = 'bold 24px Space Mono';
+        ctx.fillText(tSystemTimeStr, centerX, centerY - 10);
+        
+        // T-Tick Microseconds
+        ctx.fillStyle = '#80FFFF'; // Lighter Cyan
+        ctx.font = '16px Space Mono';
+        ctx.fillText(tMicrosecondsStr, centerX, centerY + 15);
+        
+        ctx.shadowBlur = 0; 
+    }
+
+    /**
+     * Draws a planet with atmosphere and label.
+     */
+    function drawPlanet(angleRad, planet) {
+        const x = centerX + planet.radius * Math.cos(angleRad);
+        const y = centerY + planet.radius * Math.sin(angleRad);
+        
+        // 1. Draw Atmosphere/Halo 
+        const atmGradient = ctx.createRadialGradient(x, y, 0, x, y, planet.size * 1.5);
+        atmGradient.addColorStop(0, `${planet.color}80`);
+        atmGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = atmGradient;
+        ctx.beginPath();
+        ctx.arc(x, y, planet.size * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Draw the Planet Core
+        ctx.beginPath();
+        ctx.arc(x, y, planet.size, 0, Math.PI * 2);
+        ctx.fillStyle = planet.color;
+        ctx.shadowColor = planet.color;
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        ctx.shadowBlur = 0; 
+
+        // 3. Draw a name tag near the planet (dynamic placement)
+        ctx.fillStyle = '#C9D1D9';
+        ctx.font = '6px Space Mono';
+        const labelOffset = 10;
+        ctx.fillText(planet.name.toUpperCase(), x + labelOffset * Math.cos(angleRad + (Math.PI / 2)), 
+                                                y + labelOffset * Math.sin(angleRad + (Math.PI / 2)));
+    }
+
+    /**
+     * The main drawing function that updates the entire system visualization.
+     */
+    function drawSystem() {
+        const now = new Date();
+        const td = calculateTTimeComponents(now);
+        
+        drawBackground();
+
+        // Calculate the total progress through the T-Month cycle (0 to 1)
+        const monthProgress = td.T_DayIndexFractional / DAYS_IN_T_MONTH;
+
+        // --- 1. Draw Orbits and Reference Line ---
+        drawOrbits(monthProgress);
+
+        // --- 2. Draw the Sun (TAHKMAHNELLE) - Now Orange ---
+        
+        // Central Flare/Glow 
+        const gradient = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, 40);
+        gradient.addColorStop(0, 'rgba(255, 165, 0, 0.6)'); // Orange
+        gradient.addColorStop(0.5, 'rgba(255, 140, 0, 0.4)'); // Darker Orange
+        gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Sun Core
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = '#FF8C00'; // Dark Orange core
+        ctx.shadowColor = '#FFA500'; // Orange shadow
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0; 
+        
+        // --- 3. Draw INTEGRATED T-TIME CLOCK ---
+        drawTTimeClock(td);
+
+        // --- 4. Draw Planets in Motion ---
+        
+        PLANETS.forEach((planet, index) => {
+            // Angle in degrees: (Month Progress * Revolution Factor * 360) + initial offset
+            const initialOffset = index * 45; 
+            const angleDegrees = (monthProgress * planet.revFactor * 360) + initialOffset;
+            
+            // Convert to radians for sin/cos (Start at 12 o'clock)
+            const angleRad = (angleDegrees % 360) * (Math.PI / 180) - (Math.PI / 2); 
+
+            drawPlanet(angleRad, planet);
+        });
+
+        // --- 5. Update Console Readouts ---
+        
+        const tDayProgress = (td.T_DayIndexFractional + 1).toFixed(4);
+        document.getElementById('tMonthProgress').textContent = 
+            `T-Day ${tDayProgress} / ${DAYS_IN_T_MONTH} Days (${((tDayProgress/DAYS_IN_T_MONTH) * 100).toFixed(2)}% Complete)`;
+
+
+        // Loop the animation
+        requestAnimationFrame(drawSystem);
+    }
+
+    // --- 6. INITIALIZATION ---
 
     window.onload = function() {
-        // Start the clock running at the T-Tick interval (46ms)
-        setInterval(updateClock, 46);
-        updateClock(); // Initial render
+        if (ctx) {
+            requestAnimationFrame(drawSystem);
+        } else {
+            console.error("Canvas context not available.");
+        }
     };
 </script>
 </body>
