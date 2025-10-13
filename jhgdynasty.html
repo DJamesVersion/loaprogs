@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Tahkmahnelle Stem-String Family Tree</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{
+    --bg:#0f0c08;
+    --panel:#fffaf2;
+    --ink:#2e2a26;
+    --accent:#c89a4a;
+    --muted:#9b8a75;
+    --glow: rgba(200,154,74,0.15);
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#0f0c08 0%, #1b1610 60%);}
+  body{font-family:Inter, Georgia, serif;color:var(--panel);display:flex;flex-direction:column}
+  header{padding:20px 28px;color:var(--panel);display:flex;align-items:center;gap:18px}
+  header h1{font-family:Georgia,serif;font-size:20px;margin:0;color:var(--panel)}
+  .wrap{display:flex;flex:1;gap:18px;padding:18px;box-sizing:border-box}
+  /* left: canvas */
+  .canvas {
+    flex:1;
+    background:linear-gradient(180deg, rgba(255,250,242,0.02), rgba(255,250,242,0.01));
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(200,154,74,0.06);
+  }
+  svg{width:100%;height:100%;display:block}
+  /* node visuals */
+  .node {
+    cursor:pointer;
+    transition:transform .18s ease;
+  }
+  .node:hover{transform:scale(1.06)}
+  .node circle{
+    fill:var(--panel);
+    stroke:var(--accent);
+    stroke-width:2;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
+  }
+  .node text{
+    fill:var(--ink);
+    font-weight:600;
+    font-size:12px;
+    pointer-events:none;
+    font-family:Georgia, serif;
+  }
+  /* string styles */
+  .string {
+    fill:none;
+    stroke:rgba(200,154,74,0.12);
+    stroke-width:2.2;
+    stroke-linecap:round;
+    transition: stroke .12s ease, stroke-width .12s ease;
+  }
+  .string.active{
+    stroke:var(--accent);
+    stroke-width:3.4;
+    stroke-opacity:1;
+    filter: drop-shadow(0 6px 18px rgba(200,154,74,0.18));
+  }
+  /* right: lore panel */
+  .panel{
+    width:360px;
+    background:var(--panel);
+    color:var(--ink);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.45);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    border:1px solid rgba(0,0,0,0.06);
+  }
+  .panel h2{margin:0;font-family:Georgia,serif;font-size:16px;color:var(--ink)}
+  .meta{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .lore{flex:1;overflow:auto;padding:12px;border-radius:8px;background:linear-gradient(180deg,white, #fffdf9);box-shadow:inset 0 1px 0 rgba(0,0,0,0.02)}
+  .lore p{margin:0 0 10px 0;color:var(--ink);line-height:1.45}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{
+    background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:8px 10px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;
+  }
+  .btn:active{transform:translateY(1px)}
+  footer{padding:12px 18px;color:var(--muted);font-size:13px;text-align:center}
+  /* responsive */
+  @media (max-width:920px){
+    .wrap{flex-direction:column}
+    .panel{width:100%}
+  }
+</style>
+</head>
+<body>
+<header>
+  <svg width="42" height="42" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12"cy="12"r="10"fill="#c89a4a"/><path d="M6 12c2-3 8-3 10 0" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+  <h1>TAHKMAHNELLE — Stem String Family Tree</h1>
+</header>
+
+<div class="wrap">
+  <div class="canvas" id="canvas">
+    <!-- SVG will be injected here -->
+    <svg id="svgroot" viewBox="0 0 1400 760" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="false"></svg>
+  </div>
+
+  <aside class="panel" id="panel">
+    <h2 id="panelName">Click a node to reveal lore</h2>
+    <div class="meta" id="panelMeta">7 Generations • 221 Members (interactive subset)</div>
+    <div class="lore" id="panelLore">
+      <p>Nodes represent family members. Strings connecting them vibrate like resonant modes. Click any node to read that member's secret mythos.</p>
+    </div>
+    <div class="controls">
+      <button class="btn" id="resetBtn">Reset view</button>
+      <button class="btn" id="pulseBtn">Pulse strings</button>
+    </div>
+  </aside>
+</div>
+
+<footer>Design: Stem-string layout with oscillating connections — a playful nod to string theory's resonant modes</footer>
+
+<script>
+/* ===== Data: compact sample of the 221 roster (subset used for visualization) =====
+   The full 221-member roster exists in your project; here we model a representative subset
+   and place nodes across 7 horizontal tiers (generations). */
+const members = [
+  {id:1, name:"Patton the First", title:"Chrono Keeper", gen:1},
+  {id:2, name:"Kaitra", title:"Time Keeper (Queen)", gen:1},
+  {id:3, name:"Henri", title:"The Wise Keeper (King)", gen:1},
+
+  {id:4, name:"Jocelyn", title:"Pathseer Keeper", gen:2},
+  {id:5, name:"Henrietta", title:"Glyphbinder Keeper", gen:2},
+  {id:6, name:"Gabriella", title:"Artifact Keeper", gen:2},
+
+  {id:7, name:"Wilson", title:"Gemina Defender", gen:3},
+  {id:8, name:"James", title:"Owl Keeper", gen:3},
+  {id:9, name:"Patton", title:"Flame Binder", gen:3},
+  {id:10, name:"Leslie", title:"Storm Weaver", gen:3},
+  {id:11, name:"Kerr", title:"Spirit Keeper", gen:3},
+
+  {id:20, name:"Gausepohl", title:"Lore Healer", gen:4},
+  {id:21, name:"Pham", title:"Tree Seer", gen:4},
+  {id:22, name:"Rush", title:"Orb Keeper", gen:4},
+  {id:23, name:"Xavier", title:"Rune Binder", gen:4},
+  {id:24, name:"Lebus", title:"Deep Keeper", gen:4},
+
+  {id:40, name:"Anderson", title:"Time Healer", gen:5},
+  {id:41, name:"Maya", title:"Seed Keeper", gen:5},
+  {id:42, name:"Fitz", title:"Moon Keeper", gen:5},
+  {id:43, name:"Chen", title:"Gray Seer", gen:5},
+
+  {id:61, name:"Stone", title:"Timeward Keeper", gen:6},
+  {id:62, name:"Saagara", title:"Bell Binder", gen:6},
+  {id:63, name:"Kayla", title:"Tome Spinner", gen:6},
+
+  {id:100, name:"James Patton Wilson Tahkmahnelle", title:"Spiral Flame Seer", gen:7}
+];
+
+/* layout params */
+const svg = document.getElementById('svgroot');
+const W = 1400, H = 760;
+svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+/* generate positions: 7 generation tiers */
+const tiers = 7;
+const tierY = (g) => 90 + (g-1) * ((H - 180) / (tiers-1)); // vertical spacing
+
+/* group nodes by generation */
+const byGen = {};
+members.forEach(m => { byGen[m.gen] = byGen[m.gen] || []; byGen[m.gen].push(m); });
+
+/* assign x positions spaced evenly per tier, with subtle noise for organic feel */
+for (let g=1; g<=tiers; g++){
+  const list = byGen[g] || [];
+  const count = list.length;
+  list.forEach((m, i) => {
+    const margin = 120;
+    const avail = W - margin*2;
+    const t = count>1 ? i/(count-1) : 0.5;
+    const jitter = (Math.sin(m.id * 12.345) * 0.04 + Math.cos(m.id * 7.77) * 0.03);
+    m.x = margin + avail * (t + jitter*0.08);
+    m.y = tierY(g);
+  });
+}
+
+/* helper: cubic bezier path between two points with curvature proportional to vertical gap */
+function makeStringPath(a,b){
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const curve = Math.min(140, Math.abs(dy)*0.6 + Math.abs(dx)*0.12) + 40;
+  const cx1 = a.x;
+  const cy1 = a.y + curve;
+  const cx2 = b.x;
+  const cy2 = b.y - curve;
+  return `M ${a.x} ${a.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${b.x} ${b.y}`;
+}
+
+/* create strings (connections) — a poetic branching structure mapping */
+const connections = [
+  // founders -> gen2
+  [1,4],[1,5],[1,6],
+  // gen2 -> gen3
+  [4,8],[5,9],[6,7],[6,10],[5,11],
+  // gen3 -> gen4
+  [7,20],[8,21],[9,22],[10,23],[11,24],
+  // gen4 -> gen5
+  [20,40],[21,41],[22,42],[23,43],
+  // gen5 -> gen6
+  [40,61],[41,62],[42,63],
+  // gen6 -> final convergence
+  [61,100],[62,100],[63,100]
+];
+
+/* create defs for glow */
+const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+const glow = document.createElementNS("http://www.w3.org/2000/svg","filter");
+glow.setAttribute("id","glow");
+glow.innerHTML = '<feGaussianBlur stdDeviation="6" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>';
+defs.appendChild(glow);
+svg.appendChild(defs);
+
+/* draw strings */
+const stringEls = [];
+connections.forEach((c, idx) => {
+  const a = members.find(m=>m.id===c[0]);
+  const b = members.find(m=>m.id===c[1]);
+  if(!a || !b) return;
+  const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+  path.classList.add('string');
+  path.setAttribute('d', makeStringPath(a,b));
+  path.dataset.idx = idx;
+  svg.appendChild(path);
+  stringEls.push({el:path,a,b});
+});
+
+/* draw nodes (z-order above strings) */
+members.forEach(m => {
+  const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+  g.classList.add("node");
+  g.setAttribute("transform",`translate(${m.x},${m.y})`);
+  g.dataset.id = m.id;
+
+  const circ = document.createElementNS("http://www.w3.org/2000/svg","circle");
+  circ.setAttribute("r",28);
+  circ.setAttribute("cx",0);
+  circ.setAttribute("cy",0);
+  g.appendChild(circ);
+
+  const txt = document.createElementNS("http://www.w3.org/2000/svg","text");
+  txt.setAttribute("x",0);
+  txt.setAttribute("y",36);
+  txt.setAttribute("text-anchor","middle");
+  txt.textContent = m.name.split(' ')[0]; // short label
+  g.appendChild(txt);
+
+  // attach click handler
+  g.addEventListener('click', ()=> selectMember(m.id));
+  // hover highlight strings connected
+  g.addEventListener('mouseenter', ()=> hoverMember(m.id, true));
+  g.addEventListener('mouseleave', ()=> hoverMember(m.id, false));
+
+  svg.appendChild(g);
+});
+
+/* Panel update */
+const panelName = document.getElementById('panelName');
+const panelMeta = document.getElementById('panelMeta');
+const panelLore = document.getElementById('panelLore');
+
+function selectMember(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  // highlight connected strings
+  stringEls.forEach(s=>{
+    const connected = (s.a.id===id || s.b.id===id || s.a.id===100 && id===100 || s.b.id===100 && id===100);
+    s.el.classList.toggle('active', connected);
+  });
+
+  // show lore (compact generated mythos)
+  panelName.textContent = `${m.name}`;
+  panelMeta.textContent = `Title: ${m.title} • Generation ${m.gen}`;
+  panelLore.innerHTML = `
+    <p><strong>Secret Echo</strong>: A whisper woven into the family's cosmogram, audible only when the glyph hour aligns.</p>
+    <p><strong>Rite</strong>: ${m.name} keeps a ritual object — ${m.title} — that responds to Spiral Flame light.</p>
+    <p><strong>Line</strong>: Descended through generation ${m.gen} of the Tahkmahnelle line; their resonance helps tune the palace strings.</p>
+  `;
+}
+
+/* hover highlights strings softly */
+function hoverMember(id, on){
+  stringEls.forEach(s=>{
+    const connected = (s.a.id===id || s.b.id===id || (id===100 && (s.a.id===100 || s.b.id===100)));
+    s.el.style.transition = 'stroke-width .12s ease, stroke .12s ease';
+    if(on && connected){
+      s.el.style.stroke = 'rgba(200,154,74,0.9)';
+      s.el.style.strokeWidth = '3.4';
+      s.el.style.filter = 'url(#glow)';
+    } else {
+      s.el.style.stroke = '';
+      s.el.style.strokeWidth = '';
+      s.el.style.filter = '';
+    }
+  });
+}
+
+/* small gentle animation of strings: oscillate control points by time */
+let t0 = performance.now();
+function animate(){
+  const t = (performance.now()-t0)/900;
+  stringEls.forEach(s=>{
+    const a = s.a, b = s.b;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const baseCurve = Math.min(140, Math.abs(dy)*0.6 + Math.abs(dx)*0.12) + 40;
+    const wobble = Math.sin((a.id + b.id) * 0.233 + t*2.2) * 12 + Math.cos((a.id-b.id)*0.17 + t*1.7)*8;
+    const cx1y = a.y + baseCurve + wobble*0.35;
+    const cx2y = b.y - baseCurve - wobble*0.25;
+    const d = `M ${a.x} ${a.y} C ${a.x} ${cx1y}, ${b.x} ${cx2y}, ${b.x} ${b.y}`;
+    s.el.setAttribute('d', d);
+  });
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+/* controls */
+document.getElementById('resetBtn').addEventListener('click', ()=> {
+  panelName.textContent = 'Click a node to reveal lore';
+  panelMeta.textContent = '7 Generations • 221 Members (interactive subset)';
+  panelLore.innerHTML = '<p>Nodes represent family members. Strings connecting them vibrate like resonant modes. Click any node to read that member\'s secret mythos.</p>';
+  stringEls.forEach(s=> s.el.classList.remove('active'));
+});
+
+document.getElementById('pulseBtn').addEventListener('click', ()=> {
+  // quick pulse animation: activate all then fade
+  stringEls.forEach(s=> s.el.classList.add('active'));
+  setTimeout(()=> stringEls.forEach(s=> s.el.classList.remove('active')), 700);
+});
+
+/* Accessibility: keyboard navigation through nodes */
+let focusIndex = 0;
+const nodeEls = Array.from(svg.querySelectorAll('.node'));
+if(nodeEls.length){
+  nodeEls[0].setAttribute('tabindex',0);
+  nodeEls.forEach((n,i)=> n.addEventListener('keydown',(ev)=>{
+    if(ev.key === 'Enter' || ev.key === ' ') { n.click(); ev.preventDefault(); }
+    if(ev.key === 'ArrowRight'){ focusIndex = Math.min(nodeEls.length-1, i+1); nodeEls[focusIndex].focus();}
+    if(ev.key === 'ArrowLeft'){ focusIndex = Math.max(0, i-1); nodeEls[focusIndex].focus();}
+  }));
+}
+
+/* initial focus: highlight final convergence node slightly */
+selectMember(100);
+</script>
+</body>
+</html>
